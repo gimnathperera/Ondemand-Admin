@@ -1,7 +1,7 @@
 import { Avatar, Button } from '@mui/material';
 import LocalPrintshopIcon from '@mui/icons-material/LocalPrintshop';
 import LogoImage from 'src/assets/images/Logo.svg';
-import QRImg from 'src/assets/images/qr.png';
+import qrImage from 'src/assets/images/qr.svg';
 
 const MapMarker2 = ({ size = 16, color = 'currentColor' }) => (
   <svg
@@ -178,7 +178,7 @@ const BusinessCardFront = ({
             </li>
           )}
         </ul>
-        <img alt="qr-code" src={QRImg} />
+        <img alt="qr-code" src={qrImage} />
       </div>
     </div>
   );
