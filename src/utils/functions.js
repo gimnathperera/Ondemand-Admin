@@ -1,6 +1,7 @@
 const geolib = require('geolib');
 const moment = require('moment');
-const fs = require('fs');
+const path = require('path');
+const { readdirSync, rmSync, promises } = require('fs');
 
 const { location } = require('../config/config');
 const logger = require('../config/logger');
@@ -47,11 +48,16 @@ const generateInvoiceId = (worker) => {
 };
 
 const removeTempFile = async (filePath) => {
-  await fs.promises.rm(filePath, {
+  await promises.rm(filePath, {
     recursive: true,
     force: true,
   });
   logger.info('✓ Temp file removed successfully');
+};
+
+const removeFileBulk = async () => {
+  const dir = path.join(__dirname, '..', '..', 'uploads');
+  readdirSync(dir).forEach((f) => rmSync(`${dir}/${f}`));
 };
 
 module.exports = {
@@ -61,4 +67,5 @@ module.exports = {
   generatePaySlipName,
   removeTempFile,
   generateInvoiceId,
+  removeFileBulk,
 };
