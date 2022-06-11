@@ -178,7 +178,7 @@ const BusinessCardFront = ({
             </li>
           )}
         </ul>
-        <img alt="qr-code" src={QRImg} />
+        <img alt="qr-code" src={'static/images/content/qr.png'} />
       </div>
     </div>
   );

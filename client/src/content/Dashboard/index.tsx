@@ -10,7 +10,7 @@ function Dashboard() {
   return (
     <>
       <Helmet>
-        <title>NHC - Admin</title>
+        <title>Ondemand | Admin</title>
       </Helmet>
       <PageTitleWrapper>
         <PageHeader />

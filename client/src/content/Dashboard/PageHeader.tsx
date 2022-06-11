@@ -6,19 +6,14 @@ const PageHeader = () => {
   const theme = useTheme();
   const currentUser = useSelector(({ auth }: RootStateOrAny) => auth.user);
 
-  const user = {
-    name: 'Catherine Pike',
-    avatar: '/static/images/avatars/6.png'
-  };
-
   return (
     <Grid container alignItems="center">
       <Grid item>
         <Avatar
           sx={{ mr: 2, width: theme.spacing(8), height: theme.spacing(8) }}
           variant="rounded"
-          alt={user.name}
-          src={user.avatar}
+          alt={''}
+          src={'/static/images/avatars/6.png'}
         />
       </Grid>
       <Grid item>
