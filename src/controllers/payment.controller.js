@@ -1,0 +1,84 @@
+const httpStatus = require('http-status');
+const moment = require('moment');
+
+const ApiError = require('../utils/ApiError');
+const catchAsync = require('../utils/catchAsync');
+const pick = require('../utils/pick');
+const { generatePaySlipName, removeTempFile, generateInvoiceId } = require('../utils/functions');
+const { paymentService, pdfService } = require('../services');
+const { uploadPaySlip } = require('../s3');
+
+// Invoice submit by worker every fortnite (15th & 30th)
+const submitInvoice = catchAsync(async (req, res) => {
+  const files = req.files;
+  const { worker, totalPayment } = req.body;
+  if (files?.length == 0) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'No invoice received');
+  }
+  // get the invoice file and send the file to admin via email
+  const workerData = await paymentService.submitInvoice(worker);
+
+  //get worker details from response and pass it to generatePaySlip function to populate paySlip
+
+  // payslip pdf key
+  const paySlipName = generatePaySlipName(workerData?.userId);
+
+  // generate invoiceId
+  const invoiceId = generateInvoiceId(workerData?.userId);
+
+  const pdfData = {
+    invoiceId,
+    paySlipName,
+    totalPayment,
+    workerAddress: workerData?.address,
+    workerEmail: workerData?.email,
+    workerFullName: workerData?.fullName,
+  };
+
+  // generate a payslip pdf
+  const genResponse = await pdfService.generatePaySlip(pdfData);
+
+  // push the generated pdf to s3
+  const paySlipFile = await uploadPaySlip(genResponse, paySlipName);
+
+  // update the db
+  const payload = {
+    invoiceId,
+    worker,
+    paySlipKey: paySlipFile?.key,
+    totalPayment,
+  };
+
+  // send the response to client
+  await paymentService.createPaySlipRecord(payload);
+
+  // clear the tempory document
+  await removeTempFile(genResponse);
+
+  res.send({ message: 'Invoice has been submitted successfully', status: true });
+});
+
+const getPaySlips = catchAsync(async (req, res) => {
+  let filter = pick(req.query, ['isSend', 'worker']);
+
+  if (req?.query?.startDate && req?.query?.endDate) {
+    filter = {
+      ...filter,
+      ...{
+        createdAt: {
+          $gte: moment(req.query.startDate).format('YYYY-MM-DDTHH:mm:ssZ'),
+          $lt: moment(req.query.endDate).format('YYYY-MM-DDTHH:mm:ssZ'),
+        },
+      },
+    };
+  }
+  const options = { ...pick(req.query, ['sortBy', 'limit', 'page']), populate: 'worker' }; //populate workers
+
+  const result = await paymentService.queryPaySlips(filter, options);
+  res.send(result);
+});
+
+module.exports = {
+  submitInvoice,
+  getPaySlips,
+};

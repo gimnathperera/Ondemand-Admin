@@ -1,0 +1,11 @@
+module.exports.authService = require('./auth.service');
+module.exports.emailService = require('./email.service');
+module.exports.tokenService = require('./token.service');
+module.exports.userService = require('./user.service');
+module.exports.jobService = require('./job.service');
+module.exports.recordService = require('./record.service');
+module.exports.documentService = require('./document.service');
+module.exports.messageService = require('./message.service');
+module.exports.reportService = require('./report.service');
+module.exports.paymentService = require('./payment.service');
+module.exports.pdfService = require('./pdf.service');
