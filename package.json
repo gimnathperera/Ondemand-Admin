@@ -11,7 +11,7 @@
     "node": "14.16.1"
   },
   "scripts": {
-    "start": "nodemon src/index.js",
+    "start": "node src/index.js",
     "install-client": "cd client && npm install",
     "build": "cd client && npm run build",
     "heroku-postbuild": "npm run install-client && npm run build"
@@ -86,7 +86,6 @@
     "jest": "^26.0.1",
     "lint-staged": "^11.0.0",
     "node-mocks-http": "^1.8.0",
-    "nodemon": "^2.0.0",
     "prettier": "^2.0.5",
     "supertest": "^6.0.1"
   }
