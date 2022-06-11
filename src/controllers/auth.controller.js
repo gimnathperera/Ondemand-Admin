@@ -5,7 +5,7 @@ const userService = require('../services/user.service');
 const tokenService = require('../services/token.service');
 const emailService = require('../services/email.service');
 const documentService = require('../services/document.service');
-const { Message } = require('../models');
+const ApiError = require('../utils/ApiError');
 
 const register = catchAsync(async (req, res) => {
   const user = await userService.createUser(req.body);
