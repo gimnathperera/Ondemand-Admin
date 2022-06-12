@@ -295,7 +295,7 @@ const WorkerEditTab = ({ _worker }: any) => {
                       textAlign={{ sm: 'right' }}
                     >
                       <Box pr={3} pb={2}>
-                        Name:
+                        Full Name:
                       </Box>
                     </Grid>
                     <Grid item xs={12} sm={8} md={9}>
@@ -492,15 +492,15 @@ const WorkerEditTab = ({ _worker }: any) => {
                     <Grid
                       item
                       xs={12}
-                      sm={4}
-                      md={3}
+                      sm={6}
+                      md={6}
                       textAlign={{ sm: 'right' }}
                     >
                       <Box pr={3} pb={2}>
                         Employee Number:
                       </Box>
                     </Grid>
-                    <Grid item xs={12} sm={8} md={9}>
+                    <Grid item xs={12} sm={6} md={6}>
                       <Text color="black">
                         <b>
                           {' '}
@@ -513,15 +513,15 @@ const WorkerEditTab = ({ _worker }: any) => {
                     <Grid
                       item
                       xs={12}
-                      sm={4}
-                      md={3}
+                      sm={6}
+                      md={6}
                       textAlign={{ sm: 'right' }}
                     >
                       <Box pr={3} pb={2}>
                         Registered as:
                       </Box>
                     </Grid>
-                    <Grid item xs={12} sm={8} md={9}>
+                    <Grid item xs={12} sm={6} md={6}>
                       <Text color="black">
                         <b>
                           {' '}
@@ -534,15 +534,15 @@ const WorkerEditTab = ({ _worker }: any) => {
                     <Grid
                       item
                       xs={12}
-                      sm={4}
-                      md={3}
+                      sm={6}
+                      md={6}
                       textAlign={{ sm: 'right' }}
                     >
                       <Box pr={3} pb={2}>
                         Account Type:
                       </Box>
                     </Grid>
-                    <Grid item xs={12} sm={8} md={9}>
+                    <Grid item xs={12} sm={6} md={6}>
                       <Text color="black">
                         <b>
                           {_worker.role || (
@@ -555,15 +555,15 @@ const WorkerEditTab = ({ _worker }: any) => {
                     <Grid
                       item
                       xs={12}
-                      sm={4}
-                      md={3}
+                      sm={6}
+                      md={6}
                       textAlign={{ sm: 'right' }}
                     >
                       <Box pr={3} pb={2}>
                         Account status:
                       </Box>
                     </Grid>
-                    <Grid item xs={12} sm={8} md={9}>
+                    <Grid item xs={12} sm={6} md={6}>
                       {_worker?.status && getStatusLabel(_worker?.status)}
                     </Grid>
                   </Grid>
@@ -595,15 +595,15 @@ const WorkerEditTab = ({ _worker }: any) => {
                     <Grid
                       item
                       xs={12}
-                      sm={4}
-                      md={3}
+                      sm={6}
+                      md={6}
                       textAlign={{ sm: 'right' }}
                     >
                       <Box pr={3} pb={2}>
                         ABN:
                       </Box>
                     </Grid>
-                    <Grid item xs={12} sm={8} md={9}>
+                    <Grid item xs={12} sm={6} md={6}>
                       <Text color="black">
                         <b>
                           {' '}
@@ -616,15 +616,15 @@ const WorkerEditTab = ({ _worker }: any) => {
                     <Grid
                       item
                       xs={12}
-                      sm={4}
-                      md={3}
+                      sm={6}
+                      md={6}
                       textAlign={{ sm: 'right' }}
                     >
                       <Box pr={3} pb={2}>
                         Name Of Bank:
                       </Box>
                     </Grid>
-                    <Grid item xs={12} sm={8} md={9}>
+                    <Grid item xs={12} sm={6} md={6}>
                       <Text color="black">
                         <b>
                           {' '}
@@ -637,15 +637,15 @@ const WorkerEditTab = ({ _worker }: any) => {
                     <Grid
                       item
                       xs={12}
-                      sm={4}
-                      md={3}
+                      sm={6}
+                      md={6}
                       textAlign={{ sm: 'right' }}
                     >
                       <Box pr={3} pb={2}>
                         BSB:
                       </Box>
                     </Grid>
-                    <Grid item xs={12} sm={8} md={9}>
+                    <Grid item xs={12} sm={6} md={6}>
                       <Text color="black">
                         <b>
                           {_worker?.bsb || (
@@ -657,15 +657,15 @@ const WorkerEditTab = ({ _worker }: any) => {
                     <Grid
                       item
                       xs={12}
-                      sm={4}
-                      md={3}
+                      sm={6}
+                      md={6}
                       textAlign={{ sm: 'right' }}
                     >
                       <Box pr={3} pb={2}>
                         Account Number:
                       </Box>
                     </Grid>
-                    <Grid item xs={12} sm={8} md={9}>
+                    <Grid item xs={12} sm={6} md={6}>
                       <Text color="black">
                         <b>
                           {_worker?.accountNumber || (
