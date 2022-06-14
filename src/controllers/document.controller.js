@@ -3,6 +3,7 @@ const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const documentService = require('../services/document.service');
 const { Document } = require('../models');
+const { removeFileBulk } = require('../utils/functions');
 
 const cleanPreviousDocument = async (ownerId, documentKey) => {
   await Document.deleteMany({ owner: ownerId, docKey: documentKey });
@@ -32,7 +33,7 @@ const uploadDocument = catchAsync(async (req, res) => {
     const document = await documentService.updateDocumentDetails(dataObject);
     docRecords.push(document);
   }
-
+  await removeFileBulk(); //clean uploads folder
   res.send(docRecords);
 });
 
@@ -87,6 +88,7 @@ const uploadProfilePicture = catchAsync(async (req, res) => {
     docRecords.push(document);
   }
 
+  await removeFileBulk(); //clean uploads folder
   res.send(docRecords);
 });
 

@@ -92,7 +92,7 @@ const Login = () => {
           }) => (
             <form onSubmit={handleSubmit}>
               <FormHeaderContainer sx={{ mb: 3 }}>
-                <FormSubHeaderSection sx={{ mb: 3 }}>
+                <FormSubHeaderSection>
                   <Typography color="#252733" variant="h2" align="center">
                     Log in to Dashboard
                   </Typography>

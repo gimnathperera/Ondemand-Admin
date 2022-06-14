@@ -197,7 +197,6 @@ const NewApplicantTable: FC<NewApplicantTableProps> = ({ workers }) => {
               <TableCell align="center">Emergency Contact</TableCell>
               <TableCell align="center">Worker Type</TableCell>
               <TableCell align="center">Status</TableCell>
-              <TableCell align="center">Send</TableCell>
               <TableCell align="center">Action</TableCell>
             </TableRow>
           </TableHead>
@@ -318,27 +317,6 @@ const NewApplicantTable: FC<NewApplicantTableProps> = ({ workers }) => {
                   <TableCell align="center">{worker.userType}</TableCell>
                   <TableCell align="center">
                     {getStatusLabel(worker.status)}
-                  </TableCell>
-
-                  <TableCell align="center">
-                    <Tooltip title="Send Agreement Document" arrow>
-                      {loading ? (
-                        <CircularProgress size={20} color="success" />
-                      ) : (
-                        <IconButton
-                          sx={{
-                            '&:hover': {
-                              background: theme.colors.primary.lighter
-                            }
-                          }}
-                          color="success"
-                          size="medium"
-                          onClick={() => handleEmailSend(worker?.email)}
-                        >
-                          <LocalPostOfficeIcon />
-                        </IconButton>
-                      )}
-                    </Tooltip>
                   </TableCell>
 
                   <TableCell align="center">

@@ -174,7 +174,6 @@ const NewApplicantTable: FC<NewApplicantTableProps> = ({ applicants }) => {
               <TableCell align="center">Emergency Contact</TableCell>
               <TableCell align="center">Applied as:</TableCell>
               <TableCell align="center">Status</TableCell>
-              <TableCell align="center">Send</TableCell>
               <TableCell align="center">Action</TableCell>
             </TableRow>
           </TableHead>
@@ -283,13 +282,7 @@ const NewApplicantTable: FC<NewApplicantTableProps> = ({ applicants }) => {
                   <TableCell align="center">
                     {getStatusLabel(applicant?.status)}
                   </TableCell>
-                  <TableCell align="center">
-                    <Tooltip title="Send Agreement Document" arrow>
-                      <Button color="success" size="medium" variant="contained">
-                        <LocalPostOfficeIcon />
-                      </Button>
-                    </Tooltip>
-                  </TableCell>
+
                   <TableCell
                     align="center"
                     sx={{
