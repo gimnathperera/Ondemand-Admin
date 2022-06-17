@@ -125,13 +125,7 @@ const AddWorkerToJobForm = ({
       Yup.object().shape({
         worker: Yup.string().required('Worker required'),
         workerStartDate: Yup.string().required('Start date required'),
-        workerEndDate: Yup.string().required('End date required'),
-        shifts: Yup.array().of(
-          Yup.object().shape({
-            workerStartTime: Yup.string().required('Start time required'),
-            workerEndTime: Yup.string().required('End time required')
-          })
-        )
+        workerEndDate: Yup.string().required('End date required')
       })
     )
   });
@@ -141,6 +135,7 @@ const AddWorkerToJobForm = ({
       jobID,
       workers
     };
+    console.log('>>===>> >>===>> payLoad', payLoad);
 
     // dispatch(createJobWorkers(payLoad));
     onSuccess();
@@ -166,8 +161,6 @@ const AddWorkerToJobForm = ({
     handleBlur,
     handleChange
   }) => {
-    console.log('>>===>> >>===>> name', name);
-
     return (
       <FieldArray
         name={name}
