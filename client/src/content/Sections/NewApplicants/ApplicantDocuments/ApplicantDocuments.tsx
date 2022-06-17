@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -10,10 +9,8 @@ import {
 import { useDispatch, useSelector, RootStateOrAny } from 'react-redux';
 import fileDownload from 'js-file-download';
 import axios from 'axios';
-import moment from 'moment';
 import _ from 'lodash';
-import { styled } from '@mui/material/styles';
-import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
+import FileDownloadRoundedIcon from '@mui/icons-material/FileDownloadRounded';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 
 import FileUpload from 'src/components/FileUpload';
@@ -25,20 +22,6 @@ type WorkerDocProps = {
   workerId?: string;
   employeeId?: string;
 };
-
-const DownloadContainer = styled('div')`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  overflow: 'hidden';
-  border-radius: 15px;
-  cursor: pointer;
-  box-shadow: 0px 0px 4px 0px;
-  padding: 5px;
-  margin-bottom: 10px;
-  width: 90%;
-`;
 
 const WorkerDocuments = ({ workerId, employeeId }: WorkerDocProps) => {
   const dispatch = useDispatch();
@@ -155,39 +138,52 @@ const WorkerDocuments = ({ workerId, employeeId }: WorkerDocProps) => {
             >
               {dox.length > 0 ? (
                 dox.map((doc: any) => (
-                  <DownloadContainer
-                    onClick={() => handleFileDownload(doc.docKey)}
+                  <div
+                    style={{
+                      width: '270px',
+                      height: '36px',
+                      border: '1px solid #4CAF50',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      marginBottom: '10px',
+                      borderRadius: '3px'
+                    }}
                   >
+                    <div style={{ display: 'flex' }}>
+                      <div style={{ display: 'flex' }}>
+                        <InsertDriveFileIcon />
+                      </div>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          paddingLeft: '5px',
+                          fontSize: '11pt',
+                          fontWeight: 'bold',
+                          color: '#333'
+                        }}
+                      >
+                        {doc?.docName}
+                      </div>
+                    </div>
+
                     <div
                       style={{
                         display: 'flex',
+                        backgroundColor: '#4CAF50',
+                        color: 'white',
+                        width: '50px',
+                        height: '100%',
                         alignItems: 'center',
-                        columnGap: 5
+                        justifyContent: 'center',
+                        cursor: 'pointer'
                       }}
+                      onClick={() => handleFileDownload(doc?.docKey)}
                     >
-                      <InsertDriveFileIcon />
-
-                      <div
-                        style={{ maxWidth: '250px', wordBreak: 'break-all' }}
-                      >
-                        <p style={{ color: '#A17575', margin: 3 }}>
-                          {doc.docName}
-                        </p>
-                        <p
-                          style={{
-                            color: '#A17575',
-                            fontSize: '10px',
-                            margin: 3
-                          }}
-                        >
-                          {moment(doc.createdAt).format('YYYY-MM-DD HH:mm')}
-                        </p>
-                      </div>
+                      <FileDownloadRoundedIcon />
                     </div>
-                    <div>
-                      <DownloadForOfflineIcon />
-                    </div>
-                  </DownloadContainer>
+                  </div>
                 ))
               ) : (
                 <div

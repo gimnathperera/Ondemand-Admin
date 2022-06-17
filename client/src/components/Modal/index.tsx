@@ -15,6 +15,7 @@ interface ModalScreenProps {
   content: any;
   modalHeader?: string;
   modalDescription?: string;
+  fullScreen?: boolean;
 }
 
 const useStyles = makeStyles({
@@ -35,7 +36,8 @@ const ModalScreen = ({
   handleClose,
   content,
   modalHeader,
-  modalDescription
+  modalDescription,
+  fullScreen
 }: ModalScreenProps) => {
   const classes = useStyles();
   return (
@@ -44,6 +46,7 @@ const ModalScreen = ({
       onClose={handleClose}
       classes={{ paper: classes.dialogPaper }}
       sx={{ background: 'none' }}
+      fullScreen={fullScreen}
     >
       <DialogTitle>
         <ModalHeader>

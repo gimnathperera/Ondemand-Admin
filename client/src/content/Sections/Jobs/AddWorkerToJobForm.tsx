@@ -21,6 +21,13 @@ import { createJobWorkers } from 'src/store/actions/job.actions';
 import { fetchActiveWorkerList } from 'src/store/actions/worker.actions';
 import { DATE_FORMAT } from 'src/constants/common-configurations';
 
+import OutlinedInput from '@mui/material/OutlinedInput';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
+import ListItemText from '@mui/material/ListItemText';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Checkbox from '@mui/material/Checkbox';
+
 interface AddWorkerToJobFormProps {
   onSuccess(): any;
   jobID: string;
@@ -29,6 +36,27 @@ interface AddWorkerToJobFormProps {
   scheduleType: string;
   existingWorkers: any[];
 }
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250
+    }
+  }
+};
+
+const weekDays = [
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+  'Sunday'
+];
 
 const AddWorkerToJobForm = ({
   onSuccess,
@@ -71,9 +99,22 @@ const AddWorkerToJobForm = ({
               workerStartDate: moment(startDate).format(DATE_FORMAT),
               workerEndDate: moment(endDate).format(DATE_FORMAT),
               shifts: [
-                { workerStartTime: '06:00', workerEndTime: '14:00' },
-                { workerStartTime: '14:00', workerEndTime: '22:00' },
-                { workerStartTime: '22:00', workerEndTime: '06:00' }
+                {
+                  dates: [
+                    'Monday',
+                    'Tuesday',
+                    'Wednesday',
+                    'Thursday',
+                    'Friday',
+                    'Saturday',
+                    'Sunday'
+                  ],
+                  times: [
+                    { workerStartTime: '06:00', workerEndTime: '14:00' },
+                    { workerStartTime: '14:00', workerEndTime: '22:00' },
+                    { workerStartTime: '22:00', workerEndTime: '06:00' }
+                  ]
+                }
               ]
             }
           ]
@@ -101,7 +142,7 @@ const AddWorkerToJobForm = ({
       workers
     };
 
-    dispatch(createJobWorkers(payLoad));
+    // dispatch(createJobWorkers(payLoad));
     onSuccess();
   };
 
@@ -114,6 +155,103 @@ const AddWorkerToJobForm = ({
           <span style={{ marginLeft: 20 }}>{worker?.fullName}</span>
         </MenuItem>
       ))
+    );
+  };
+
+  const TimeSlots = ({
+    name,
+    times,
+    touched,
+    errors,
+    handleBlur,
+    handleChange
+  }) => {
+    console.log('>>===>> >>===>> name', name);
+
+    return (
+      <FieldArray
+        name={name}
+        render={(helpers) => (
+          <>
+            {times &&
+              times.length &&
+              times.map((shift, index) => (
+                <Box
+                  display="flex"
+                  sx={{
+                    justifyContent: 'space-between',
+                    paddingTop: '20px',
+                    columnGap: '10px'
+                  }}
+                >
+                  <Typography
+                    variant="h5"
+                    sx={{ display: 'flex', alignItems: 'center' }}
+                  >
+                    {`Shift #${index + 1}`}
+                  </Typography>
+                  <TextField
+                    error={Boolean(
+                      touched?.times?.[index]?.workerStartTime &&
+                        errors?.times?.[index]?.workerStartTime
+                    )}
+                    helperText={
+                      touched?.times?.[index]?.workerStartTime &&
+                      errors?.times?.[index]?.workerStartTime
+                    }
+                    label="Start Time"
+                    type="time"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    InputLabelProps={{
+                      shrink: true
+                    }}
+                    sx={{ width: '50%' }}
+                    name={`${name}.${index}.workerStartTime`}
+                    value={times[index]?.workerStartTime}
+                  />
+                  <TextField
+                    error={Boolean(
+                      touched?.times?.[index]?.workerEndTime &&
+                        errors?.times?.[index]?.workerEndTime
+                    )}
+                    helperText={
+                      touched?.times?.[index]?.workerEndTime &&
+                      errors?.times?.[index]?.workerEndTime
+                    }
+                    label="End Time"
+                    type="time"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    InputLabelProps={{
+                      shrink: true
+                    }}
+                    sx={{ width: '50%' }}
+                    name={`${name}.${index}.workerEndTime`}
+                    value={times[index]?.workerEndTime}
+                  />
+
+                  <Box sx={{ display: 'flex' }}>
+                    <IconButton
+                      onClick={() => handleMoreShifts(helpers, index)}
+                      color="primary"
+                    >
+                      <AddIcon />
+                    </IconButton>
+                    <IconButton
+                      onClick={() => {
+                        times.length > 1 && helpers.remove(index);
+                      }}
+                      color="error"
+                    >
+                      <RemoveIcon />
+                    </IconButton>
+                  </Box>
+                </Box>
+              ))}
+          </>
+        )}
+      />
     );
   };
 
@@ -133,88 +271,115 @@ const AddWorkerToJobForm = ({
             {shifts &&
               shifts.length &&
               shifts.map((shift, index) => (
-                <Box
-                  display="flex"
-                  sx={{
-                    justifyContent: 'space-between',
-                    paddingTop: '20px',
-                    columnGap: '10px'
-                  }}
-                >
-                  <Typography
-                    variant="h5"
-                    sx={{ display: 'flex', alignItems: 'center' }}
-                  >
-                    {`Shift #${index + 1}`}
-                  </Typography>
-                  <TextField
-                    error={Boolean(
-                      touched?.shifts?.[index]?.workerStartTime &&
-                        errors?.shifts?.[index]?.workerStartTime
-                    )}
-                    helperText={
-                      touched?.shifts?.[index]?.workerStartTime &&
-                      errors?.shifts?.[index]?.workerStartTime
-                    }
-                    label="Start Time"
-                    type="time"
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    InputLabelProps={{
-                      shrink: true
-                    }}
-                    sx={{ width: '50%' }}
-                    name={`${name}.${index}.workerStartTime`}
-                    value={shifts[index]?.workerStartTime}
-                  />
-                  <TextField
-                    error={Boolean(
-                      touched?.shifts?.[index]?.workerEndTime &&
-                        errors?.shifts?.[index]?.workerEndTime
-                    )}
-                    helperText={
-                      touched?.shifts?.[index]?.workerEndTime &&
-                      errors?.shifts?.[index]?.workerEndTime
-                    }
-                    label="End Time"
-                    type="time"
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    InputLabelProps={{
-                      shrink: true
-                    }}
-                    sx={{ width: '50%' }}
-                    name={`${name}.${index}.workerEndTime`}
-                    value={shifts[index]?.workerEndTime}
-                  />
+                <>
+                  {index === 0 && (
+                    <Box display="flex" sx={{ margin: '15px 0px' }}>
+                      <Button
+                        onClick={() => handleMoreShedules(helpers, index)}
+                        color="warning"
+                        variant="outlined"
+                        sx={{ border: '1px dashed', width: '100%' }}
+                      >
+                        Add More Schedule
+                      </Button>
+                    </Box>
+                  )}
+                  <Card key={index} sx={{ margin: '15px 0px' }}>
+                    <CardContent>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'space-between'
+                        }}
+                      >
+                        <Typography
+                          variant="h5"
+                          sx={{ display: 'flex', alignItems: 'center' }}
+                        >
+                          {`Schdules #${index + 1}`}
+                        </Typography>
 
-                  <Box sx={{ display: 'flex' }}>
-                    <IconButton
-                      onClick={() =>
-                        helpers.insert(index, {
-                          workerStartTime: '',
-                          workerEndTime: ''
-                        })
-                      }
-                      color="primary"
-                    >
-                      <AddIcon />
-                    </IconButton>
-                    <IconButton
-                      onClick={() => {
-                        shifts.length > 1 && helpers.remove(index);
-                      }}
-                      color="error"
-                    >
-                      <RemoveIcon />
-                    </IconButton>
-                  </Box>
-                </Box>
+                        <IconButton
+                          onClick={() => {
+                            shifts.length > 1 && helpers.remove(index);
+                          }}
+                          size="small"
+                        >
+                          ❌
+                        </IconButton>
+                      </Box>
+                      <Box>
+                        <FormControl sx={{ mt: 2, width: '100%' }}>
+                          <InputLabel id="demo-multiple-checkbox-label">
+                            Dates
+                          </InputLabel>
+                          <Select
+                            labelId="demo-multiple-checkbox-label"
+                            id="demo-multiple-checkbox"
+                            multiple
+                            value={shifts[index]?.dates}
+                            onChange={handleChange}
+                            input={<OutlinedInput label="Dates" />}
+                            renderValue={(selected) => selected.join(', ')}
+                            MenuProps={MenuProps}
+                            name={`${name}.${index}.dates`}
+                          >
+                            {weekDays.map((day) => (
+                              <MenuItem key={day} value={day}>
+                                <Checkbox
+                                  checked={
+                                    shifts[index]?.dates.indexOf(day) > -1
+                                  }
+                                />
+                                <ListItemText primary={day} />
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+
+                        <TimeSlots
+                          name={`${name}.${index}.times`}
+                          times={shifts[index]?.times}
+                          touched={touched}
+                          errors={errors}
+                          handleBlur={handleBlur}
+                          handleChange={handleChange}
+                        />
+                      </Box>
+                    </CardContent>
+                  </Card>
+                </>
               ))}
           </>
         )}
       />
     );
+  };
+
+  const handleMoreShifts = (helpers: any, index: number) => {
+    helpers.insert(index, {
+      workerStartTime: '',
+      workerEndTime: ''
+    });
+  };
+
+  const handleMoreShedules = (helpers: any, index: number) => {
+    helpers.insert(index, {
+      dates: [
+        'Monday',
+        'Tuesday',
+        'Wednesday',
+        'Thursday',
+        'Friday',
+        'Saturday',
+        'Sunday'
+      ],
+      times: [
+        { workerStartTime: '06:00', workerEndTime: '14:00' },
+        { workerStartTime: '14:00', workerEndTime: '22:00' },
+        { workerStartTime: '22:00', workerEndTime: '06:00' }
+      ]
+    });
   };
 
   const handleAddMoreWorkers = (helpers: any, index: number) => {
@@ -223,9 +388,22 @@ const AddWorkerToJobForm = ({
       workerStartDate: moment(startDate).format(DATE_FORMAT),
       workerEndDate: moment(endDate).format(DATE_FORMAT),
       shifts: [
-        { workerStartTime: '06:00', workerEndTime: '14:00' },
-        { workerStartTime: '14:00', workerEndTime: '22:00' },
-        { workerStartTime: '22:00', workerEndTime: '06:00' }
+        {
+          dates: [
+            'Monday',
+            'Tuesday',
+            'Wednesday',
+            'Thursday',
+            'Friday',
+            'Saturday',
+            'Sunday'
+          ],
+          times: [
+            { workerStartTime: '06:00', workerEndTime: '14:00' },
+            { workerStartTime: '14:00', workerEndTime: '22:00' },
+            { workerStartTime: '22:00', workerEndTime: '06:00' }
+          ]
+        }
       ]
     });
   };
@@ -364,15 +542,18 @@ const AddWorkerToJobForm = ({
                     />
                   </CardContent>
                 </Card>
-                <Box display="flex">
-                  <Button
-                    onClick={() => handleAddMoreWorkers(helpers, index)}
-                    color="primary"
-                    variant="outlined"
-                  >
-                    Add more
-                  </Button>
-                </Box>
+                {index === 0 && (
+                  <Box display="flex">
+                    <Button
+                      onClick={() => handleAddMoreWorkers(helpers, index)}
+                      color="info"
+                      variant="outlined"
+                      sx={{ border: '1px dashed', width: '100%' }}
+                    >
+                      Add More Worker
+                    </Button>
+                  </Box>
+                )}
               </>
             ))}
           </>
@@ -422,7 +603,7 @@ const AddWorkerToJobForm = ({
                       type="submit"
                       variant="contained"
                     >
-                      {'ADD WORKERS'}
+                      Submit
                     </Button>
                   )}
                 </Box>
