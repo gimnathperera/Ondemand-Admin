@@ -5,6 +5,7 @@ import { useDispatch, useSelector, RootStateOrAny } from 'react-redux';
 import _ from 'lodash';
 
 import { fetchJobTimeLine } from 'src/store/actions/job.actions';
+import moment from 'moment';
 
 const JobTimeLog = ({ jobId }) => {
   const dispatch = useDispatch();
@@ -20,7 +21,7 @@ const JobTimeLog = ({ jobId }) => {
     if (recordList.length > 0) {
       _.map(recordList, (record) => {
         let temp = {
-          ts: record?.createdAt,
+          ts: moment(record?.createdAt).format('YYYY-MM-DD HH:mm'),
           text: record?.description
         };
         records.push(temp);

@@ -75,79 +75,18 @@ const getJobById = async (id) => {
  * @returns {Promise<Job>}
  */
 const createJob = async (jobBody) => {
-  // worker time slot logic for a scheduled job create
   if (jobBody.workers && jobBody.workers.length > 0) {
     const _workers = jobBody.workers;
-
-    // when comparing dates make sure the date values are in 'YYYY-MM-DD' format
-    for await (const { worker, workerStartDate, workerEndDate, shifts = [] } of _workers) {
-      //check for number of shifts allocated for each jobScheduleType
-      if (jobBody.scheduleType == jobScheduleType.EMERGENCY && shifts.length !== 1) {
-        throw new ApiError(httpStatus.BAD_REQUEST, `Invalid number of shifts`);
-      }
-      if (jobBody.scheduleType == jobScheduleType.SCHEDULED && shifts.length !== 1) {
-        throw new ApiError(httpStatus.BAD_REQUEST, `Invalid number of shifts`);
-      }
-      if (jobBody.scheduleType == jobScheduleType.SHIFTTED && shifts.length < 3) {
-        throw new ApiError(httpStatus.BAD_REQUEST, `Invalid number of shifts`);
-      }
-
-      //check for invalid worker startDate comparing with new job start date and worker's new startDate
-      if (!moment(jobBody.startDate).isSameOrBefore(workerStartDate)) {
-        throw new ApiError(httpStatus.BAD_REQUEST, `Invalid workerStartDate for ${worker}`);
-      }
-      //check for invalid worker endDate comparing with new job start date and worker's new endDate
-      if (!moment(jobBody.endDate).isSameOrAfter(workerEndDate)) {
-        throw new ApiError(httpStatus.BAD_REQUEST, `Invalid workerEndDate for ${worker}`);
-      }
-
-      //worker new startTime and endTime check inside of the shifts array coming from request API
-      if (shifts.length > 0) {
-        _.map(shifts, ({ workerEndTime, workerStartTime }) => {
-          if (!moment(workerEndTime, 'hh:mm').isAfter(moment(workerStartTime, 'hh:mm'))) {
-            throw new ApiError(httpStatus.BAD_REQUEST, `Invalid workerEndTime for ${worker}`);
-          }
-        });
-      }
-
+    for await (const { worker } of _workers) {
       const existingWorker = await userService.getUserById(worker);
       if (!existingWorker) throw new ApiError(httpStatus.NOT_FOUND, `Worker not found for ${worker}`);
       if (existingWorker.status !== userStatus.ACTIVE) {
         throw new ApiError(httpStatus.UNPROCESSABLE_ENTITY, `Worker ${worker} is not Active`);
       }
-
-      //get all the previous active jobs assigned to this worker
-      const availableJobs = await getAvailableJobsByWorker(worker);
-
-      //check for the time conflicts in job shifts comparing to new shifts coming from request API
-      _.map(availableJobs, (existingJob) => {
-        // if new record startDate > old record endDate || new record endDate < old record startDate
-        if (
-          !(
-            moment(workerEndDate).isBefore(existingJob.workerStartDate) ||
-            moment(workerStartDate).isAfter(existingJob.workerEndDate)
-          )
-        ) {
-          // Iterate through new shifts coming from request API
-          _.map(shifts, (newShift) => {
-            const newStartTime = moment(newShift.workerStartTime, 'hh:mm');
-            const newEndTime = moment(newShift.workerEndTime, 'hh:mm');
-
-            // Iterate through old shifts assigned to this worker
-            _.map(existingJob.shifts, (existingShift) => {
-              const oldStartTime = moment(existingShift.workerStartTime, 'hh:mm');
-              const oldEndTime = moment(existingShift.workerEndTime, 'hh:mm');
-
-              if (!(newEndTime.isBefore(oldStartTime) || newStartTime.isAfter(oldEndTime))) {
-                throw new ApiError(httpStatus.UNPROCESSABLE_ENTITY, `Given time slot is not available for worker ${worker}`);
-              }
-            });
-          });
-        }
-      });
     }
   }
 
+  //  shift dates and times validations should be added
   const newJob = await Job.create(jobBody);
 
   // create the record saying the job is created
@@ -205,7 +144,7 @@ const updateJobById = async (jobId, updateBody) => {
       // if (shifts?.length >= 3) {
       //   _.map(shifts, ({ workerEndTime, workerStartTime }) => {
       //     if (!moment(workerEndTime, 'hh:mm').isSameOrAfter(moment(workerStartTime, 'hh:mm'))) {
-            
+
       //       throw new ApiError(httpStatus.BAD_REQUEST, `Invalid workerEndTime for ${worker}`);
       //     }
       //   });
