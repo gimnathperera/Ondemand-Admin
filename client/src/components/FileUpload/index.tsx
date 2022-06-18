@@ -2,17 +2,18 @@ import { ReactElement, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import { styled } from '@mui/material/styles';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 
 const DropContainer = styled('div')(
   ({ theme }) => `
-  border: 1px solid #121a4f !important;
+  border: 1px solid #42a5f5 !important;
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
   cursor: pointer;
   margin-bottom: 10px;
-  column-gap:15px;
-  padding: 0px 20px;
+  width:247px;
+  height:36px;
 `
 );
 
@@ -57,17 +58,44 @@ const FileUploadComponent = ({
       <input {...getInputProps()} />
       {isDragActive ? (
         <>
-          <FileUploadIcon />{' '}
           <p style={{ color: '#A17575' }}>Drop the files here ...</p>
+          <FileUploadIcon />
         </>
       ) : selectedFile ? (
         <p style={{ color: '#A17575' }}>{selectedFile.file.name}</p>
       ) : (
         <>
-          <FileUploadIcon />
-          <p style={{ color: '#A17575' }}>
-            {placeholder || 'Drag here or click to browse files'}
-          </p>
+          <div style={{ display: 'flex' }}>
+            <div style={{ display: 'flex' }}>
+              <InsertDriveFileIcon />
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                paddingLeft: '5px',
+                fontSize: '11pt',
+                fontWeight: 'bold',
+                color: '#333'
+              }}
+            >
+              {placeholder || 'Drag here or click to browse files'}
+            </div>
+          </div>
+          <div
+            style={{
+              display: 'flex',
+              backgroundColor: '#42a5f5',
+              color: 'white',
+              width: '50px',
+              height: '100%',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer'
+            }}
+          >
+            <FileUploadIcon />
+          </div>
         </>
       )}
     </DropContainer>

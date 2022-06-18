@@ -91,37 +91,37 @@ const WorkerDocuments = ({ workerId, employeeId }: WorkerDocProps) => {
                 fileType={DOC_TYPE.LICENSE}
                 owner={employeeId}
                 onFileSubmit={handleSingleFileSubmit}
-                placeholder={'Upload License'}
+                placeholder={'License'}
               />
               <FileUpload
                 fileType={DOC_TYPE.PROOF_OF_ID}
                 owner={employeeId}
                 onFileSubmit={handleSingleFileSubmit}
-                placeholder={'Upload Proof of ID'}
+                placeholder={'Proof of ID'}
               />
               <FileUpload
                 fileType={DOC_TYPE.PROOF_OF_ADDRESS}
                 owner={employeeId}
                 onFileSubmit={handleSingleFileSubmit}
-                placeholder={'Upload Proof of address'}
+                placeholder={'Proof of address'}
               />
               <FileUpload
                 fileType={DOC_TYPE.POLICE_CLEARENCE}
                 owner={employeeId}
                 onFileSubmit={handleSingleFileSubmit}
-                placeholder={'Upload Police Clearence'}
+                placeholder={'Police Clearence'}
               />
               <FileUpload
                 fileType={DOC_TYPE.CURRENT_VISA}
                 owner={employeeId}
                 onFileSubmit={handleSingleFileSubmit}
-                placeholder={'Upload Current visa'}
+                placeholder={'Current visa'}
               />
               <FileUpload
                 fileType={DOC_TYPE.VACCINE}
                 owner={employeeId}
                 onFileSubmit={handleSingleFileSubmit}
-                placeholder={'Upload vaccine'}
+                placeholder={'vaccine'}
               />
             </Grid>
             <Divider orientation="vertical" flexItem />

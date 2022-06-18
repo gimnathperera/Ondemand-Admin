@@ -33,7 +33,7 @@ const JobTimeLog = ({ jobId }) => {
     <Grid
       container
       spacing={0}
-      sx={{ height: '260px', overflow: 'auto', width: '100%' }}
+      sx={{ height: '238px', overflow: 'auto', width: '100%' }}
     >
       {loading ? (
         <Box
