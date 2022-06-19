@@ -90,7 +90,19 @@ const updateJob = {
               .items(
                 Joi.object().keys({
                   dates: Joi.array().required(),
-                  times: Joi.array().required(),
+                  times: Joi.array()
+                    .items(
+                      Joi.object().keys({
+                        workerStartTime: Joi.string()
+                          .regex(/^([0-9]{2})\:([0-9]{2})$/)
+                          .required(),
+                        workerEndTime: Joi.string()
+                          .regex(/^([0-9]{2})\:([0-9]{2})$/)
+                          .required(),
+                      })
+                    )
+                    .min(1)
+                    .required(),
                 })
               )
               .min(1)

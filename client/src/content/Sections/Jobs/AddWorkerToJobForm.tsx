@@ -25,7 +25,7 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import ListItemText from '@mui/material/ListItemText';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Select from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
 
 interface AddWorkerToJobFormProps {
@@ -63,7 +63,6 @@ const AddWorkerToJobForm = ({
   jobID,
   startDate,
   endDate,
-  scheduleType,
   existingWorkers
 }: AddWorkerToJobFormProps) => {
   const dispatch = useDispatch();
@@ -82,12 +81,19 @@ const AddWorkerToJobForm = ({
         worker: item.worker.id,
         workerStartDate: moment(item.workerStartDate).format(DATE_FORMAT),
         workerEndDate: moment(item.workerEndDate).format(DATE_FORMAT),
-        shifts: _.map(item.shifts, (shift) => _.omit(shift, '_id'))
+        shifts: _.map(item.shifts, (shift) => ({
+          ...{
+            dates: shift.dates,
+            times: _.map(shift.times, (time) => _.omit(time, '_id')) // removing _id field from shift times array
+          }
+        }))
       }
     }));
 
     return _workerList;
   };
+
+  console.log('>>===>> >>===>> workerList', convertedWorkerList());
 
   const initialFormValues = {
     workers:
@@ -135,9 +141,8 @@ const AddWorkerToJobForm = ({
       jobID,
       workers
     };
-    console.log('>>===>> >>===>> payLoad', payLoad);
 
-    // dispatch(createJobWorkers(payLoad));
+    dispatch(createJobWorkers(payLoad));
     onSuccess();
   };
 
