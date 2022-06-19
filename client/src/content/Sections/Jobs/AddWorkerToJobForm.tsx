@@ -93,8 +93,6 @@ const AddWorkerToJobForm = ({
     return _workerList;
   };
 
-  console.log('>>===>> >>===>> workerList', convertedWorkerList());
-
   const initialFormValues = {
     workers:
       existingWorkers?.length > 0
