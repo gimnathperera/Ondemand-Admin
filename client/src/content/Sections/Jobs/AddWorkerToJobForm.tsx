@@ -21,6 +21,13 @@ import { createJobWorkers } from 'src/store/actions/job.actions';
 import { fetchActiveWorkerList } from 'src/store/actions/worker.actions';
 import { DATE_FORMAT } from 'src/constants/common-configurations';
 
+import OutlinedInput from '@mui/material/OutlinedInput';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
+import ListItemText from '@mui/material/ListItemText';
+import Select from '@mui/material/Select';
+import Checkbox from '@mui/material/Checkbox';
+
 interface AddWorkerToJobFormProps {
   onSuccess(): any;
   jobID: string;
@@ -30,12 +37,32 @@ interface AddWorkerToJobFormProps {
   existingWorkers: any[];
 }
 
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250
+    }
+  }
+};
+
+const weekDays = [
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+  'Sunday'
+];
+
 const AddWorkerToJobForm = ({
   onSuccess,
   jobID,
   startDate,
   endDate,
-  scheduleType,
   existingWorkers
 }: AddWorkerToJobFormProps) => {
   const dispatch = useDispatch();
@@ -54,7 +81,12 @@ const AddWorkerToJobForm = ({
         worker: item.worker.id,
         workerStartDate: moment(item.workerStartDate).format(DATE_FORMAT),
         workerEndDate: moment(item.workerEndDate).format(DATE_FORMAT),
-        shifts: _.map(item.shifts, (shift) => _.omit(shift, '_id'))
+        shifts: _.map(item.shifts, (shift) => ({
+          ...{
+            dates: shift.dates,
+            times: _.map(shift.times, (time) => _.omit(time, '_id')) // removing _id field from shift times array
+          }
+        }))
       }
     }));
 
@@ -71,9 +103,22 @@ const AddWorkerToJobForm = ({
               workerStartDate: moment(startDate).format(DATE_FORMAT),
               workerEndDate: moment(endDate).format(DATE_FORMAT),
               shifts: [
-                { workerStartTime: '06:00', workerEndTime: '14:00' },
-                { workerStartTime: '14:00', workerEndTime: '22:00' },
-                { workerStartTime: '22:00', workerEndTime: '06:00' }
+                {
+                  dates: [
+                    'Monday',
+                    'Tuesday',
+                    'Wednesday',
+                    'Thursday',
+                    'Friday',
+                    'Saturday',
+                    'Sunday'
+                  ],
+                  times: [
+                    { workerStartTime: '06:00', workerEndTime: '14:00' },
+                    { workerStartTime: '14:00', workerEndTime: '22:00' },
+                    { workerStartTime: '22:00', workerEndTime: '06:00' }
+                  ]
+                }
               ]
             }
           ]
@@ -84,13 +129,7 @@ const AddWorkerToJobForm = ({
       Yup.object().shape({
         worker: Yup.string().required('Worker required'),
         workerStartDate: Yup.string().required('Start date required'),
-        workerEndDate: Yup.string().required('End date required'),
-        shifts: Yup.array().of(
-          Yup.object().shape({
-            workerStartTime: Yup.string().required('Start time required'),
-            workerEndTime: Yup.string().required('End time required')
-          })
-        )
+        workerEndDate: Yup.string().required('End date required')
       })
     )
   });
@@ -117,9 +156,9 @@ const AddWorkerToJobForm = ({
     );
   };
 
-  const Shifts = ({
+  const TimeSlots = ({
     name,
-    shifts,
+    times,
     touched,
     errors,
     handleBlur,
@@ -130,9 +169,9 @@ const AddWorkerToJobForm = ({
         name={name}
         render={(helpers) => (
           <>
-            {shifts &&
-              shifts.length &&
-              shifts.map((shift, index) => (
+            {times &&
+              times.length &&
+              times.map((shift, index) => (
                 <Box
                   display="flex"
                   sx={{
@@ -149,12 +188,12 @@ const AddWorkerToJobForm = ({
                   </Typography>
                   <TextField
                     error={Boolean(
-                      touched?.shifts?.[index]?.workerStartTime &&
-                        errors?.shifts?.[index]?.workerStartTime
+                      touched?.times?.[index]?.workerStartTime &&
+                        errors?.times?.[index]?.workerStartTime
                     )}
                     helperText={
-                      touched?.shifts?.[index]?.workerStartTime &&
-                      errors?.shifts?.[index]?.workerStartTime
+                      touched?.times?.[index]?.workerStartTime &&
+                      errors?.times?.[index]?.workerStartTime
                     }
                     label="Start Time"
                     type="time"
@@ -165,16 +204,16 @@ const AddWorkerToJobForm = ({
                     }}
                     sx={{ width: '50%' }}
                     name={`${name}.${index}.workerStartTime`}
-                    value={shifts[index]?.workerStartTime}
+                    value={times[index]?.workerStartTime}
                   />
                   <TextField
                     error={Boolean(
-                      touched?.shifts?.[index]?.workerEndTime &&
-                        errors?.shifts?.[index]?.workerEndTime
+                      touched?.times?.[index]?.workerEndTime &&
+                        errors?.times?.[index]?.workerEndTime
                     )}
                     helperText={
-                      touched?.shifts?.[index]?.workerEndTime &&
-                      errors?.shifts?.[index]?.workerEndTime
+                      touched?.times?.[index]?.workerEndTime &&
+                      errors?.times?.[index]?.workerEndTime
                     }
                     label="End Time"
                     type="time"
@@ -185,24 +224,19 @@ const AddWorkerToJobForm = ({
                     }}
                     sx={{ width: '50%' }}
                     name={`${name}.${index}.workerEndTime`}
-                    value={shifts[index]?.workerEndTime}
+                    value={times[index]?.workerEndTime}
                   />
 
                   <Box sx={{ display: 'flex' }}>
                     <IconButton
-                      onClick={() =>
-                        helpers.insert(index, {
-                          workerStartTime: '',
-                          workerEndTime: ''
-                        })
-                      }
+                      onClick={() => handleMoreShifts(helpers, index)}
                       color="primary"
                     >
                       <AddIcon />
                     </IconButton>
                     <IconButton
                       onClick={() => {
-                        shifts.length > 1 && helpers.remove(index);
+                        times.length > 1 && helpers.remove(index);
                       }}
                       color="error"
                     >
@@ -217,15 +251,155 @@ const AddWorkerToJobForm = ({
     );
   };
 
+  const Shifts = ({
+    name,
+    shifts,
+    touched,
+    errors,
+    handleBlur,
+    handleChange
+  }) => {
+    return (
+      <FieldArray
+        name={name}
+        render={(helpers) => (
+          <>
+            {shifts &&
+              shifts.length &&
+              shifts.map((shift, index) => (
+                <>
+                  {index === 0 && (
+                    <Box display="flex" sx={{ margin: '15px 0px' }}>
+                      <Button
+                        onClick={() => handleMoreShedules(helpers, index)}
+                        color="warning"
+                        variant="outlined"
+                        sx={{ border: '1px dashed', width: '100%' }}
+                      >
+                        Add More Schedule
+                      </Button>
+                    </Box>
+                  )}
+                  <Card key={index} sx={{ margin: '15px 0px' }}>
+                    <CardContent>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'space-between'
+                        }}
+                      >
+                        <Typography
+                          variant="h5"
+                          sx={{ display: 'flex', alignItems: 'center' }}
+                        >
+                          {`Schdules #${index + 1}`}
+                        </Typography>
+
+                        <IconButton
+                          onClick={() => {
+                            shifts.length > 1 && helpers.remove(index);
+                          }}
+                          size="small"
+                        >
+                          ❌
+                        </IconButton>
+                      </Box>
+                      <Box>
+                        <FormControl sx={{ mt: 2, width: '100%' }}>
+                          <InputLabel id="demo-multiple-checkbox-label">
+                            Dates
+                          </InputLabel>
+                          <Select
+                            labelId="demo-multiple-checkbox-label"
+                            id="demo-multiple-checkbox"
+                            multiple
+                            value={shifts[index]?.dates}
+                            onChange={handleChange}
+                            input={<OutlinedInput label="Dates" />}
+                            renderValue={(selected) => selected.join(', ')}
+                            MenuProps={MenuProps}
+                            name={`${name}.${index}.dates`}
+                          >
+                            {weekDays.map((day) => (
+                              <MenuItem key={day} value={day}>
+                                <Checkbox
+                                  checked={
+                                    shifts[index]?.dates.indexOf(day) > -1
+                                  }
+                                />
+                                <ListItemText primary={day} />
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+
+                        <TimeSlots
+                          name={`${name}.${index}.times`}
+                          times={shifts[index]?.times}
+                          touched={touched}
+                          errors={errors}
+                          handleBlur={handleBlur}
+                          handleChange={handleChange}
+                        />
+                      </Box>
+                    </CardContent>
+                  </Card>
+                </>
+              ))}
+          </>
+        )}
+      />
+    );
+  };
+
+  const handleMoreShifts = (helpers: any, index: number) => {
+    helpers.insert(index, {
+      workerStartTime: '',
+      workerEndTime: ''
+    });
+  };
+
+  const handleMoreShedules = (helpers: any, index: number) => {
+    helpers.insert(index, {
+      dates: [
+        'Monday',
+        'Tuesday',
+        'Wednesday',
+        'Thursday',
+        'Friday',
+        'Saturday',
+        'Sunday'
+      ],
+      times: [
+        { workerStartTime: '06:00', workerEndTime: '14:00' },
+        { workerStartTime: '14:00', workerEndTime: '22:00' },
+        { workerStartTime: '22:00', workerEndTime: '06:00' }
+      ]
+    });
+  };
+
   const handleAddMoreWorkers = (helpers: any, index: number) => {
     helpers.insert(index, {
       worker: '',
       workerStartDate: moment(startDate).format(DATE_FORMAT),
       workerEndDate: moment(endDate).format(DATE_FORMAT),
       shifts: [
-        { workerStartTime: '06:00', workerEndTime: '14:00' },
-        { workerStartTime: '14:00', workerEndTime: '22:00' },
-        { workerStartTime: '22:00', workerEndTime: '06:00' }
+        {
+          dates: [
+            'Monday',
+            'Tuesday',
+            'Wednesday',
+            'Thursday',
+            'Friday',
+            'Saturday',
+            'Sunday'
+          ],
+          times: [
+            { workerStartTime: '06:00', workerEndTime: '14:00' },
+            { workerStartTime: '14:00', workerEndTime: '22:00' },
+            { workerStartTime: '22:00', workerEndTime: '06:00' }
+          ]
+        }
       ]
     });
   };
@@ -364,15 +538,18 @@ const AddWorkerToJobForm = ({
                     />
                   </CardContent>
                 </Card>
-                <Box display="flex">
-                  <Button
-                    onClick={() => handleAddMoreWorkers(helpers, index)}
-                    color="primary"
-                    variant="outlined"
-                  >
-                    Add more
-                  </Button>
-                </Box>
+                {index === 0 && (
+                  <Box display="flex">
+                    <Button
+                      onClick={() => handleAddMoreWorkers(helpers, index)}
+                      color="info"
+                      variant="outlined"
+                      sx={{ border: '1px dashed', width: '100%' }}
+                    >
+                      Add More Worker
+                    </Button>
+                  </Box>
+                )}
               </>
             ))}
           </>
@@ -422,7 +599,7 @@ const AddWorkerToJobForm = ({
                       type="submit"
                       variant="contained"
                     >
-                      {'ADD WORKERS'}
+                      Submit
                     </Button>
                   )}
                 </Box>

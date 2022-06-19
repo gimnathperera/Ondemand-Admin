@@ -10,7 +10,6 @@ const createJob = {
     scheduleType: Joi.string()
       .required()
       .valid(jobScheduleType.EMERGENCY, jobScheduleType.SCHEDULED, jobScheduleType.SHIFTTED),
-    customer: Joi.string().custom(objectId),
     startDate: Joi.date().iso().required(),
     endDate: Joi.date().iso().min(Joi.ref('startDate')).required(),
     location: Joi.object()
@@ -29,8 +28,20 @@ const createJob = {
           shifts: Joi.array()
             .items(
               Joi.object().keys({
-                workerStartTime: Joi.string().regex(/^([0-9]{2})\:([0-9]{2})$/),
-                workerEndTime: Joi.string().regex(/^([0-9]{2})\:([0-9]{2})$/),
+                dates: Joi.array().required(),
+                times: Joi.array()
+                  .items(
+                    Joi.object().keys({
+                      workerStartTime: Joi.string()
+                        .regex(/^([0-9]{2})\:([0-9]{2})$/)
+                        .required(),
+                      workerEndTime: Joi.string()
+                        .regex(/^([0-9]{2})\:([0-9]{2})$/)
+                        .required(),
+                    })
+                  )
+                  .min(1)
+                  .required(),
               })
             )
             .min(1)
@@ -78,8 +89,20 @@ const updateJob = {
             shifts: Joi.array()
               .items(
                 Joi.object().keys({
-                  workerStartTime: Joi.string().regex(/^([0-9]{2})\:([0-9]{2})$/),
-                  workerEndTime: Joi.string().regex(/^([0-9]{2})\:([0-9]{2})$/),
+                  dates: Joi.array().required(),
+                  times: Joi.array()
+                    .items(
+                      Joi.object().keys({
+                        workerStartTime: Joi.string()
+                          .regex(/^([0-9]{2})\:([0-9]{2})$/)
+                          .required(),
+                        workerEndTime: Joi.string()
+                          .regex(/^([0-9]{2})\:([0-9]{2})$/)
+                          .required(),
+                      })
+                    )
+                    .min(1)
+                    .required(),
                 })
               )
               .min(1)

@@ -16,9 +16,14 @@ const locationSchema = new mongoose.Schema({
   },
 });
 
-const shiftSchema = new mongoose.Schema({
+const timeSchema = new mongoose.Schema({
   workerStartTime: { type: String, required: true, trim: true },
   workerEndTime: { type: String, required: true, trim: true },
+});
+
+const shiftSchema = new mongoose.Schema({
+  dates: { type: [String], required: true },
+  times: [timeSchema],
 });
 
 const jobWorkerSchema = new mongoose.Schema({
