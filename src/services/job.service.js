@@ -2,7 +2,7 @@ const httpStatus = require('http-status');
 const moment = require('moment');
 const { userStatus } = require('../config/users');
 const { logStatus } = require('../config/logs');
-const { jobStatus, jobScheduleType } = require('../config/jobs');
+const { jobStatus } = require('../config/jobs');
 const { Job, User } = require('../models');
 const { Log } = require('../models');
 const ApiError = require('../utils/ApiError');
@@ -166,6 +166,24 @@ const queryJobs = async (filter, options) => {
   return jobs;
 };
 
+const getJobWorkers = async (filter, jobId) => {
+  const { startDate, endDate } = filter;
+  const job = await Job.findOne({ _id: mongoose.Types.ObjectId(jobId) }).populate(['workers.worker']);
+  const filteredWorkers = [];
+  if (job.workers.length > 0) {
+    const workers = job.workers;
+    workers.map((worker) => {
+      const _workerStartDate = moment(worker.workerStartDate).format('YYYY-MM-DD');
+      const _workerEndDate = moment(worker.workerEndDate).format('YYYY-MM-DD');
+
+      if (moment(_workerEndDate).isSameOrBefore(endDate) && moment(_workerStartDate).isSameOrAfter(startDate)) {
+        filteredWorkers.push(worker);
+      }
+    });
+  }
+  return filteredWorkers;
+};
+
 /**
  * Create daily user job record
  * @param {Object} logBody
@@ -246,4 +264,5 @@ module.exports = {
   trackDailyJob,
   updateDailyJobTrackById,
   updateJobStatuses,
+  getJobWorkers,
 };

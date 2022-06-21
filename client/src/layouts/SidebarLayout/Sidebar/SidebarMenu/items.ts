@@ -7,6 +7,7 @@ import EngineeringTwoToneIcon from '@mui/icons-material/EngineeringTwoTone';
 import MmsTwoToneIcon from '@mui/icons-material/MmsTwoTone';
 import GroupAddTwoToneIcon from '@mui/icons-material/GroupAddTwoTone';
 import PaymentsTwoToneIcon from '@mui/icons-material/PaymentsTwoTone';
+import CalendarTodayTwoToneIcon from '@mui/icons-material/CalendarTodayTwoTone';
 
 export interface MenuItem {
   link?: string;
@@ -49,6 +50,16 @@ const menuItems: MenuItems[] = [
         name: 'Jobs',
         link: '/app/jobs',
         icon: BusinessCenterTwoToneIcon
+      }
+    ]
+  },
+  {
+    heading: '',
+    items: [
+      {
+        name: 'Calender',
+        link: '/app/job-workers',
+        icon: CalendarTodayTwoToneIcon
       }
     ]
   },
