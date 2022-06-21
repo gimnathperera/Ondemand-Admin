@@ -16,6 +16,7 @@ interface ModalScreenProps {
   modalHeader?: string;
   modalDescription?: string;
   fullScreen?: boolean;
+  width?: number;
 }
 
 const useStyles = makeStyles({
@@ -37,7 +38,8 @@ const ModalScreen = ({
   content,
   modalHeader,
   modalDescription,
-  fullScreen
+  fullScreen,
+  width=600
 }: ModalScreenProps) => {
   const classes = useStyles();
   return (
@@ -45,7 +47,14 @@ const ModalScreen = ({
       open={isOpen}
       onClose={handleClose}
       classes={{ paper: classes.dialogPaper }}
-      sx={{ background: 'none' }}
+      sx={{
+        '& .MuiDialog-container': {
+          '& .MuiPaper-root': {
+            width: '100%',
+            maxWidth: `${width}px` // Set your width here
+          }
+        }
+      }}
       fullScreen={fullScreen}
     >
       <DialogTitle>
