@@ -9,15 +9,14 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  Typography
+  Typography,
+  Button
 } from '@mui/material';
-
+import _ from 'lodash';
 import { styled } from '@mui/material/styles';
 
-import Label from 'src/components/Label';
-import { convertTimeValue } from 'src/common/functions';
-import moment from 'moment';
-import _ from 'lodash';
+import Modal from 'src/components/Modal';
+import ShiftTable from 'src/content/Sections/Jobs/ShiftTable';
 
 interface ReportTableProps {
   reports?: any[];
@@ -34,9 +33,24 @@ const TableComponent = styled(Table)(
 const JobWorkerTable: FC<ReportTableProps> = ({ reports }) => {
   const [page, setPage] = useState<number>(0);
   const [limit, setLimit] = useState<number>(5);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [shifts, setShifts] = useState<any>([]);
+  const [currentUser, setCurrentUser] = useState<string>('');
 
   const applyPagination = (_jobs: any, page: number, limit: number): any => {
     return _jobs.slice(page * limit, page * limit + limit);
+  };
+
+  const handleModalClose = () => {
+    setShifts([]);
+    setCurrentUser('');
+    setIsOpen(false);
+  };
+
+  const handleMoreShift = (selectedShifts: any, worker: string) => {
+    setShifts(selectedShifts);
+    setCurrentUser(worker);
+    setIsOpen(true);
   };
 
   const handlePageChange = (event: any, newPage: number): void => {
@@ -51,86 +65,18 @@ const JobWorkerTable: FC<ReportTableProps> = ({ reports }) => {
 
   const paginatedReports = applyPagination(filteredReports, page, limit);
 
-  const getGeoStatus = (status: Boolean) => {
-    if (status) {
-      return <Label color={'success'}>{'Matched'}</Label>;
-    } else {
-      return <Label color={'warning'}>{'Unmatched'}</Label>;
-    }
-  };
-
-  const getShiftStatusLabel = (shiftStatus: string): JSX.Element => {
-    const map = {
-      Completed: {
-        text: 'Completed',
-        color: 'success'
-      },
-      Active: {
-        text: 'Active',
-        color: 'info'
-      }
-    };
-
-    const { text, color }: any = map[shiftStatus];
-
-    return <Label color={color}>{text}</Label>;
-  };
-
-  const getJobStatusLabel = (jobStatus: string): JSX.Element => {
-    const map = {
-      Pending: {
-        text: 'Pending',
-        color: 'warning'
-      },
-      Active: {
-        text: 'Active',
-        color: 'info'
-      },
-      Completed: {
-        text: 'Completed',
-        color: 'success'
-      }
-    };
-
-    const { text, color }: any = map[jobStatus];
-
-    return <Label color={color}>{text}</Label>;
-  };
-
-  const getShiftTimeList = (
-    shifts: Array<any>,
-    workerId: string
-  ): JSX.Element => {
-    const worker = _.filter(shifts, { worker: workerId });
-
-    return (
-      <ul>
-        {worker[0]?.shifts.map(({ workerStartTime, workerEndTime, _id }) => (
-          <li key={_id}>
-            {convertTimeValue(workerStartTime) || '-'} -{' '}
-            {convertTimeValue(workerEndTime) || '-'}
-          </li>
-        ))}
-      </ul>
-    );
-  };
-
   return (
     <>
       <TableContainer>
         <TableComponent>
           <TableHead>
             <TableRow>
-              <TableCell align="center">Log Date</TableCell>
-              <TableCell align="center">Worker ID</TableCell>
-              <TableCell align="center">Worker Name</TableCell>
-              <TableCell align="center">Shift Status</TableCell>
-              <TableCell align="center">Job Status</TableCell>
-              <TableCell align="center">Schedule Type</TableCell>
-              <TableCell align="center">Assigned Start / End</TableCell>
-              <TableCell align="center">Actual Start / End</TableCell>
-              <TableCell align="center">Working Hours</TableCell>
-              <TableCell align="center">Geo Location</TableCell>
+              <TableCell align="center">Worker</TableCell>
+              <TableCell align="center">Contact Number</TableCell>
+              <TableCell align="center">Emergency Number</TableCell>
+              <TableCell align="center">Email</TableCell>
+              <TableCell align="center">Address</TableCell>
+              <TableCell align="center">Schedules</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -153,12 +99,11 @@ const JobWorkerTable: FC<ReportTableProps> = ({ reports }) => {
                           color="text.primary"
                           gutterBottom
                           noWrap
-                          align="left"
+                          align="center"
                         >
-                          {moment(report?.logginDate).format('YYYY-MM-DD') ||
-                            '-'}
+                          {report?.worker?.fullName || '-'}
                           <br />
-                          {moment(report?.logginDate).format('dddd') || '-'}
+                          {`E-${leadingZeroes(report?.worker?.userId, 3)}`}
                         </Typography>
                       </Box>
                     </Box>
@@ -171,7 +116,7 @@ const JobWorkerTable: FC<ReportTableProps> = ({ reports }) => {
                       gutterBottom
                       noWrap
                     >
-                      {`E-${leadingZeroes(report?.worker?.userId, 3)}`}
+                      {`${report?.worker.phoneNumber}` || '-'}
                     </Typography>
                   </TableCell>
                   <TableCell align="center">
@@ -182,9 +127,10 @@ const JobWorkerTable: FC<ReportTableProps> = ({ reports }) => {
                       gutterBottom
                       noWrap
                     >
-                      {`${report?.worker.fullName}` || '-'}
+                      {`${report?.worker?.emergencyContact}` || '-'}
                     </Typography>
                   </TableCell>
+
                   <TableCell align="center">
                     <Typography
                       variant="body1"
@@ -193,29 +139,7 @@ const JobWorkerTable: FC<ReportTableProps> = ({ reports }) => {
                       gutterBottom
                       noWrap
                     >
-                      {getShiftStatusLabel(report?.status) || '-'}
-                    </Typography>
-                  </TableCell>
-                  <TableCell align="center">
-                    <Typography
-                      variant="body1"
-                      fontWeight="bold"
-                      color="text.primary"
-                      gutterBottom
-                      noWrap
-                    >
-                      {getJobStatusLabel(report?.job?.status) || '-'}
-                    </Typography>
-                  </TableCell>
-                  <TableCell align="center">
-                    <Typography
-                      variant="body1"
-                      fontWeight="bold"
-                      color="text.primary"
-                      gutterBottom
-                      noWrap
-                    >
-                      {report?.job?.scheduleType || '-'}
+                      {report?.worker?.email || '-'}
                     </Typography>
                   </TableCell>
 
@@ -225,37 +149,24 @@ const JobWorkerTable: FC<ReportTableProps> = ({ reports }) => {
                       fontWeight="bold"
                       color="text.primary"
                       gutterBottom
-                    >
-                      {getShiftTimeList(
-                        report?.job.workers,
-                        report.worker._id
-                      ) || '-'}
-                    </Typography>
-                  </TableCell>
-                  <TableCell align="center" sx={{ minWidth: '172px' }}>
-                    <Typography
-                      variant="body1"
-                      fontWeight="bold"
-                      color="text.primary"
-                      gutterBottom
                       noWrap
                     >
-                      {convertTimeValue(report?.startTime) || '-'} -{' '}
-                      {convertTimeValue(report?.endTime) || '-'}
+                      {report?.worker?.address || '-'}
                     </Typography>
                   </TableCell>
                   <TableCell align="center">
-                    <Typography
-                      variant="body1"
-                      fontWeight="bold"
-                      color="text.primary"
-                      gutterBottom
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      onClick={() =>
+                        handleMoreShift(
+                          report?.shifts,
+                          report?.worker?.fullName
+                        )
+                      }
                     >
-                      {`${report?.workingHours} Hours` || '-'}
-                    </Typography>
-                  </TableCell>
-                  <TableCell align="center">
-                    {getGeoStatus(report?.locationStatus)}
+                      View schedule
+                    </Button>
                   </TableCell>
                 </TableRow>
               );
@@ -263,6 +174,14 @@ const JobWorkerTable: FC<ReportTableProps> = ({ reports }) => {
           </TableBody>
         </TableComponent>
       </TableContainer>
+      <Modal
+        isOpen={isOpen}
+        width={800}
+        handleClose={handleModalClose}
+        content={<ShiftTable data={shifts} />}
+        modalHeader={`${currentUser} | Shift Allocation`}
+      />
+
       <Box p={2}>
         <TablePagination
           component="div"

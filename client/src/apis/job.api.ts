@@ -45,13 +45,12 @@ export const updateJobApi = async ({ id, data }: any) => {
   }
 };
 
-export const fetchJobWorkerListApi = async (id: string) => {
+export const fetchJobWorkerListApi = async ({ id, startDate, endDate }) => {
   try {
-    const response = await axios({
-      method: 'GET',
-      url: `${BASE_URL}/job-worker`,
-      params: { job_id: id }
-    });
+    const response = await request(
+      'GET',
+      `/jobs/job-workers/${id}?startDate=${startDate}&endDate=${endDate}`
+    );
 
     return response;
   } catch (error) {

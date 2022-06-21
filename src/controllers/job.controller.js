@@ -32,12 +32,11 @@ const getJobWorkers = catchAsync(async (req, res) => {
   const jobId = req.params.jobId;
 
   let filter = pick(req.query, ['worker']);
-  if (req?.query?.startDate && req?.query?.endDate) {
+  if (req?.query?.requiredDate) {
     filter = {
       ...filter,
       ...{
-        startDate: moment(req.query.startDate).format('YYYY-MM-DDTHH:mm:ssZ'),
-        endDate: moment(req.query.endDate).format('YYYY-MM-DDTHH:mm:ssZ'),
+        requiredDate: moment(req.query.requiredDate).format('YYYY-MM-DDTHH:mm:ssZ'),
       },
     };
   }

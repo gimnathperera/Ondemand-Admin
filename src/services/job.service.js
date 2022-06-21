@@ -13,23 +13,6 @@ const mongoose = require('mongoose');
 const _ = require('lodash');
 const logger = require('../config/logger');
 
-const getAvailableJobsByWorker = async (worker) => {
-  const jobs = await Job.aggregate([
-    { $unwind: '$workers' },
-    { $match: { 'workers.worker': mongoose.Types.ObjectId(worker), status: { $ne: jobStatus.COMPLETED } } },
-    {
-      $project: {
-        _id: '$_id',
-        workerStartDate: '$workers.workerStartDate',
-        workerEndDate: '$workers.workerEndDate',
-        shifts: '$workers.shifts',
-      },
-    },
-  ]);
-
-  return jobs;
-};
-
 const getDailyJobTrackById = async (id) => {
   return Log.findById(id);
 };
@@ -167,8 +150,8 @@ const queryJobs = async (filter, options) => {
 };
 
 const getJobWorkers = async (filter, jobId) => {
-  const { startDate, endDate } = filter;
   const job = await Job.findOne({ _id: mongoose.Types.ObjectId(jobId) }).populate(['workers.worker']);
+  const requiredDate = moment(filter?.requiredDate).format('YYYY-MM-DD');
   const filteredWorkers = [];
   if (job.workers.length > 0) {
     const workers = job.workers;
@@ -176,7 +159,7 @@ const getJobWorkers = async (filter, jobId) => {
       const _workerStartDate = moment(worker.workerStartDate).format('YYYY-MM-DD');
       const _workerEndDate = moment(worker.workerEndDate).format('YYYY-MM-DD');
 
-      if (moment(_workerEndDate).isSameOrBefore(endDate) && moment(_workerStartDate).isSameOrAfter(startDate)) {
+      if (moment(requiredDate).isSameOrBefore(_workerEndDate) && moment(requiredDate).isSameOrAfter(_workerStartDate)) {
         filteredWorkers.push(worker);
       }
     });

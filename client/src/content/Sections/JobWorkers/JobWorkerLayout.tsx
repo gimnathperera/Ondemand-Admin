@@ -1,4 +1,4 @@
-import { useEffect, useState, ChangeEvent } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { useDispatch, useSelector, RootStateOrAny } from 'react-redux';
 import { styled } from '@mui/material/styles';
 import DateRangePicker from '@wojtekmaj/react-daterange-picker';
@@ -8,26 +8,23 @@ import {
   Box,
   CircularProgress,
   Divider,
-  FormControl,
-  InputLabel,
   Card,
   IconButton,
+  CardHeader,
+  FormControl,
+  InputLabel,
   Select,
   MenuItem,
-  CardHeader,
   useTheme
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import leadingZeroes from 'leading-zeroes';
 
 import JobWorkerLayout from './JobWorkerTable';
-import { fetchAllReports } from '../../../store/actions/report.action';
-import { fetchActiveWorkerList } from 'src/store/actions/worker.actions';
 import { DATE_FORMAT } from 'src/constants/common-configurations';
+import { fetchJobWorkerList } from 'src/store/actions/job.actions';
+import padWithLeadingZeroes from 'leading-zeroes';
 interface Filters {
-  status?: string;
-  sorted?: string;
-  worker?: string;
+  job?: string;
   startDate?: Date;
   endDate?: Date;
 }
@@ -49,48 +46,44 @@ const CardHeaderComponent = styled(CardHeader)(
 `
 );
 
-function ReportLayout() {
+function ReportLayout({ initialJob }) {
   const dispatch = useDispatch();
   const theme = useTheme();
   const [filters, setFilters] = useState<Filters>({
+    job: 'All',
     startDate: new Date(startOfMonth),
     endDate: new Date(endOfMonth)
   });
 
-  const reportList = useSelector(({ report }: RootStateOrAny) => report.list);
+  const reportList = useSelector(
+    ({ jobWorker }: RootStateOrAny) => jobWorker.list
+  );
   const loading = useSelector(({ common }: RootStateOrAny) => common.loading);
-
+  const jobList = useSelector(({ job }: RootStateOrAny) => job.list);
   useEffect(() => {
     dispatch(
-      fetchAllReports({
-        status: 'Completed',
-        sorted: 'desc',
+      fetchJobWorkerList({
+        id: initialJob,
         startDate: moment(startOfMonth).format(DATE_FORMAT),
         endDate: moment(endOfMonth).format(DATE_FORMAT)
       })
     );
+
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      job: initialJob
+    }));
   }, []);
 
-  useEffect(() => {
-    dispatch(fetchActiveWorkerList());
-  }, []);
-
-  const onReportSearch = ({
-    status,
-    worker,
-    sorted,
-    startDate,
-    endDate
-  }: any) => {
+  const onReportSearch = ({ startDate, endDate }: any) => {
+    //
     const payload = {
-      status,
-      worker,
-      sorted,
+      id: initialJob,
       startDate: moment(startDate).format(DATE_FORMAT),
       endDate: moment(endDate).format(DATE_FORMAT)
     };
 
-    dispatch(fetchAllReports(payload));
+    dispatch(fetchJobWorkerList(payload));
   };
 
   const handleDateChange = (value: any): void => {
@@ -107,6 +100,31 @@ function ReportLayout() {
     onReportSearch(filters);
   };
 
+  const handleJobChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    let value = null;
+
+    if (e.target.value !== 'All') {
+      value = e.target.value;
+    }
+
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      job: value
+    }));
+  };
+
+  const renderJobList = () => {
+    return (
+      jobList &&
+      jobList?.map((job: any) => (
+        <MenuItem value={job.id} key={job.id}>
+          <span>{`E-${padWithLeadingZeroes(job?.jobId, 3)}`}</span>
+          <span style={{ marginLeft: 15 }}>{job?.name}</span>
+        </MenuItem>
+      ))
+    );
+  };
+
   return (
     <>
       {!loading ? (
@@ -121,6 +139,21 @@ function ReportLayout() {
                   columnGap: '20px'
                 }}
               >
+                <FormControl sx={{ width: '200px' }} variant="outlined">
+                  <InputLabel>Job</InputLabel>
+                  <Select
+                    value={filters.job || 'All'}
+                    onChange={handleJobChange}
+                    label="Job"
+                    autoWidth
+                  >
+                    <MenuItem value={'All'}>
+                      <span>{`All Job`}</span>
+                    </MenuItem>
+                    {renderJobList()}
+                  </Select>
+                </FormControl>
+
                 <DateRangePicker
                   onChange={handleDateChange}
                   value={[filters?.startDate, filters?.endDate]}

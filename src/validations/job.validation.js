@@ -66,9 +66,7 @@ const getJobWorkers = {
     jobId: Joi.string().custom(objectId),
   }),
   query: Joi.object().keys({
-    worker: Joi.string(),
-    startDate: Joi.string(),
-    endDate: Joi.string(),
+    requiredDate: Joi.string(),
   }),
 };
 

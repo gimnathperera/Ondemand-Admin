@@ -132,7 +132,7 @@ export function* fetchJobWorkerList({
     if (response?.data) {
       yield put({
         type: SET_JOB_WOKER_LIST,
-        payload: response?.data?.data?.job_workers
+        payload: response?.data
       });
     } else {
       yield put({

@@ -19,7 +19,6 @@ import moment from 'moment';
 import Label from 'src/components/Label';
 import ShiftTable from './ShiftTable';
 import { DATE_FORMAT } from 'src/constants/common-configurations';
-import { convertTimeValue } from 'src/common/functions';
 import Modal from 'src/components/Modal';
 
 const JobWokerTable = ({ jobWorkerList }) => {
