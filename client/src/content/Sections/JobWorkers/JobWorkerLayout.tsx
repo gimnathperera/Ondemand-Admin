@@ -3,7 +3,6 @@ import padWithLeadingZeroes from 'leading-zeroes';
 import DatePicker from 'react-multi-date-picker';
 import { useDispatch, useSelector, RootStateOrAny } from 'react-redux';
 import { styled } from '@mui/material/styles';
-import DateRangePicker from '@wojtekmaj/react-daterange-picker';
 import moment from 'moment';
 
 import {
@@ -73,7 +72,7 @@ function ReportLayout({ initialJob }) {
   const onReportSearch = ({ requiredDate }: any) => {
     //
     const payload = {
-      id: initialJob,
+      id: filters.job,
       requiredDate: moment(requiredDate).format(DATE_FORMAT)
     };
 
@@ -109,7 +108,7 @@ function ReportLayout({ initialJob }) {
       jobList &&
       jobList?.map((job: any) => (
         <MenuItem value={job.id} key={job.id}>
-          <span>{`E-${padWithLeadingZeroes(job?.jobId, 3)}`}</span>
+          <span>{`J-${padWithLeadingZeroes(job?.jobId, 3)}`}</span>
           <span style={{ marginLeft: 15 }}>{job?.name}</span>
         </MenuItem>
       ))
@@ -138,7 +137,7 @@ function ReportLayout({ initialJob }) {
                     label="Job"
                     autoWidth
                   >
-                    <MenuItem value={'All'}>
+                    <MenuItem value={'All'} disabled>
                       <span>{`All Job`}</span>
                     </MenuItem>
                     {renderJobList()}
