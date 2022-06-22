@@ -16,7 +16,7 @@ const JobTimeLog = ({ jobId }) => {
     dispatch(fetchJobTimeLine({ jobId }));
   }, []);
 
-  const convertedRecords = () => {
+  const convertedRecords = (): any => {
     const records = [];
     if (recordList.length > 0) {
       _.map(recordList, (record) => {

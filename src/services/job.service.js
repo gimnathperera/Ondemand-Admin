@@ -2,7 +2,7 @@ const httpStatus = require('http-status');
 const moment = require('moment');
 const { userStatus } = require('../config/users');
 const { logStatus } = require('../config/logs');
-const { jobStatus, jobScheduleType } = require('../config/jobs');
+const { jobStatus } = require('../config/jobs');
 const { Job, User } = require('../models');
 const { Log } = require('../models');
 const ApiError = require('../utils/ApiError');
@@ -12,23 +12,6 @@ const { findWorkerObject } = require('../utils/functions');
 const mongoose = require('mongoose');
 const _ = require('lodash');
 const logger = require('../config/logger');
-
-const getAvailableJobsByWorker = async (worker) => {
-  const jobs = await Job.aggregate([
-    { $unwind: '$workers' },
-    { $match: { 'workers.worker': mongoose.Types.ObjectId(worker), status: { $ne: jobStatus.COMPLETED } } },
-    {
-      $project: {
-        _id: '$_id',
-        workerStartDate: '$workers.workerStartDate',
-        workerEndDate: '$workers.workerEndDate',
-        shifts: '$workers.shifts',
-      },
-    },
-  ]);
-
-  return jobs;
-};
 
 const getDailyJobTrackById = async (id) => {
   return Log.findById(id);
@@ -166,6 +149,24 @@ const queryJobs = async (filter, options) => {
   return jobs;
 };
 
+const getJobWorkers = async (filter, jobId) => {
+  const job = await Job.findOne({ _id: mongoose.Types.ObjectId(jobId) }).populate(['workers.worker']);
+  const requiredDate = moment(filter?.requiredDate).format('YYYY-MM-DD');
+  const filteredWorkers = [];
+  if (job.workers.length > 0) {
+    const workers = job.workers;
+    workers.map((worker) => {
+      const _workerStartDate = moment(worker.workerStartDate).format('YYYY-MM-DD');
+      const _workerEndDate = moment(worker.workerEndDate).format('YYYY-MM-DD');
+
+      if (moment(requiredDate).isSameOrBefore(_workerEndDate) && moment(requiredDate).isSameOrAfter(_workerStartDate)) {
+        filteredWorkers.push(worker);
+      }
+    });
+  }
+  return filteredWorkers;
+};
+
 /**
  * Create daily user job record
  * @param {Object} logBody
@@ -246,4 +247,5 @@ module.exports = {
   trackDailyJob,
   updateDailyJobTrackById,
   updateJobStatuses,
+  getJobWorkers,
 };

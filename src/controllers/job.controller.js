@@ -28,6 +28,23 @@ const getJobs = catchAsync(async (req, res) => {
   res.send(result);
 });
 
+const getJobWorkers = catchAsync(async (req, res) => {
+  const jobId = req.params.jobId;
+
+  let filter = pick(req.query, ['worker']);
+  if (req?.query?.requiredDate) {
+    filter = {
+      ...filter,
+      ...{
+        requiredDate: moment(req.query.requiredDate).format('YYYY-MM-DDTHH:mm:ssZ'),
+      },
+    };
+  }
+
+  const result = await jobService.getJobWorkers(filter, jobId);
+  res.send(result);
+});
+
 const getJob = catchAsync(async (req, res) => {
   const job = await jobService.getJobById(req.params.jobId);
   if (!job) {
@@ -148,4 +165,5 @@ module.exports = {
   updateJobStatuses,
   getJobRecordsByJobId,
   getJobsByUser,
+  getJobWorkers,
 };

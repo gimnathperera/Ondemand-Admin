@@ -61,6 +61,15 @@ const getJobs = {
   }),
 };
 
+const getJobWorkers = {
+  params: Joi.object().keys({
+    jobId: Joi.string().custom(objectId),
+  }),
+  query: Joi.object().keys({
+    requiredDate: Joi.string(),
+  }),
+};
+
 const getJob = {
   params: Joi.object().keys({
     jobId: Joi.string().custom(objectId),
@@ -186,4 +195,5 @@ module.exports = {
   updateDailyJobTrack,
   getJobRecordsByJobId,
   getJobsByUser,
+  getJobWorkers,
 };

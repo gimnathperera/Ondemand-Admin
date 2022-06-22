@@ -20,7 +20,6 @@ const defaultRoutes = [
     path: '/users',
     route: userRoute,
   },
-
   {
     path: '/jobs',
     route: jobRoute,
@@ -29,7 +28,6 @@ const defaultRoutes = [
     path: '/user-jobs',
     route: userJobRoute,
   },
-
   {
     path: '/messages',
     route: messageRoute,

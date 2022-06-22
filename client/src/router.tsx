@@ -16,6 +16,9 @@ const Login = Loader(lazy(() => import('src/content/Login')));
 const Dashboard = Loader(lazy(() => import('src/content/Dashboard')));
 const Reports = Loader(lazy(() => import('src/content/Sections/Reports')));
 const Payments = Loader(lazy(() => import('src/content/Sections/Payments')));
+const JobWorkers = Loader(
+  lazy(() => import('src/content/Sections/JobWorkers'))
+);
 const Jobs = Loader(lazy(() => import('src/content/Sections/Jobs')));
 const JobDetailed = Loader(
   lazy(() => import('src/content/Sections/Jobs/JobDetailedPage'))
@@ -148,8 +151,8 @@ const routes: any = (isAuthenticated) => [
         ]
       },
       {
-        path: 'woker-requests',
-        element: <StatusComingSoon />
+        path: 'job-workers',
+        element: <JobWorkers />
       },
       {
         path: 'messenger',
@@ -158,10 +161,6 @@ const routes: any = (isAuthenticated) => [
       {
         path: 'report',
         element: <Reports />
-      },
-      {
-        path: 'inventory',
-        element: <StatusComingSoon />
       },
       {
         path: 'payments',

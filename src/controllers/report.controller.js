@@ -17,7 +17,7 @@ const getReports = catchAsync(async (req, res) => {
     };
   }
 
-  const options = { ...pick(req.query, ['sortBy', 'limit', 'page']), populate: 'worker, job, job.customer' }; //populate workers
+  const options = { ...pick(req.query, ['sortBy', 'limit', 'page']), populate: 'worker, job' }; //populate workers
   const result = await reportService.queryReports(filter, options);
   res.send(result);
 });

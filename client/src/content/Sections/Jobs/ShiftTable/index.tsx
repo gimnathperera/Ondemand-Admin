@@ -14,7 +14,7 @@ const Item = styled(Paper)(({ theme }) => ({
 
 export default function BasicTable({ data }) {
   const convertedData = () => {
-    if (data.length > 0) {
+    if (data?.length > 0) {
       let _shifts = [];
       data?.map((shift: any) => {
         shift?.dates?.map((date: any) => {

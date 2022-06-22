@@ -1,7 +1,8 @@
 import { useEffect, useState, ChangeEvent } from 'react';
 import { useDispatch, useSelector, RootStateOrAny } from 'react-redux';
 import { styled } from '@mui/material/styles';
-import DateRangePicker from '@wojtekmaj/react-daterange-picker';
+import DatePicker from 'react-multi-date-picker';
+
 import moment from 'moment';
 
 import {
@@ -28,8 +29,8 @@ interface Filters {
   status?: string;
   sorted?: string;
   worker?: string;
-  startDate?: Date;
-  endDate?: Date;
+  startDate?: any;
+  endDate?: any;
 }
 
 const startOfMonth = moment()
@@ -165,11 +166,11 @@ function ReportLayout() {
   };
 
   const handleDateChange = (value: any): void => {
-    if (value?.length > 0) {
+    if (value?.length > 1) {
       setFilters((prevFilters) => ({
         ...prevFilters,
-        startDate: value?.[0],
-        endDate: value?.[1]
+        startDate: moment(value?.[0]?.toDate()).format(DATE_FORMAT),
+        endDate: moment(value?.[1]?.toDate()).format(DATE_FORMAT)
       }));
     }
   };
@@ -200,13 +201,18 @@ function ReportLayout() {
                 sx={{
                   display: 'flex',
                   width: '100%',
-                  justifyContent: 'space-between'
+                  justifyContent: 'flex-end',
+                  columnGap: '20px'
                 }}
               >
-                <DateRangePicker
-                  onChange={handleDateChange}
+                <DatePicker
                   value={[filters?.startDate, filters?.endDate]}
-                  showLeadingZeros
+                  onChange={handleDateChange}
+                  style={{
+                    height: '53px',
+                    color: '#4C5359'
+                  }}
+                  range
                 />
 
                 <FormControl sx={{ width: '200px' }} variant="outlined">
