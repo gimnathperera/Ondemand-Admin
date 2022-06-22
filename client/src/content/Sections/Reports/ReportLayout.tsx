@@ -200,7 +200,8 @@ function ReportLayout() {
                 sx={{
                   display: 'flex',
                   width: '100%',
-                  justifyContent: 'space-between'
+                  justifyContent: 'flex-end',
+                  columnGap: '20px'
                 }}
               >
                 <DateRangePicker

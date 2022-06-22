@@ -45,11 +45,11 @@ export const updateJobApi = async ({ id, data }: any) => {
   }
 };
 
-export const fetchJobWorkerListApi = async ({ id, startDate, endDate }) => {
+export const fetchJobWorkerListApi = async ({ id, requiredDate }) => {
   try {
     const response = await request(
       'GET',
-      `/jobs/job-workers/${id}?startDate=${startDate}&endDate=${endDate}`
+      `/jobs/job-workers/${id}?requiredDate=${requiredDate}`
     );
 
     return response;

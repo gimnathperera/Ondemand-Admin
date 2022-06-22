@@ -1,4 +1,6 @@
 import { ChangeEvent, useEffect, useState } from 'react';
+import padWithLeadingZeroes from 'leading-zeroes';
+import DatePicker from 'react-multi-date-picker';
 import { useDispatch, useSelector, RootStateOrAny } from 'react-redux';
 import { styled } from '@mui/material/styles';
 import DateRangePicker from '@wojtekmaj/react-daterange-picker';
@@ -22,20 +24,15 @@ import SearchIcon from '@mui/icons-material/Search';
 import JobWorkerLayout from './JobWorkerTable';
 import { DATE_FORMAT } from 'src/constants/common-configurations';
 import { fetchJobWorkerList } from 'src/store/actions/job.actions';
-import padWithLeadingZeroes from 'leading-zeroes';
+
 interface Filters {
   job?: string;
-  startDate?: Date;
-  endDate?: Date;
+  requiredDate?: any;
 }
 
 const startOfMonth = moment()
   .clone()
   .startOf('month')
-  .format('YYYY-MM-DDTHH:mm:ssZ');
-const endOfMonth = moment()
-  .clone()
-  .endOf('month')
   .format('YYYY-MM-DDTHH:mm:ssZ');
 
 const CardHeaderComponent = styled(CardHeader)(
@@ -51,8 +48,7 @@ function ReportLayout({ initialJob }) {
   const theme = useTheme();
   const [filters, setFilters] = useState<Filters>({
     job: 'All',
-    startDate: new Date(startOfMonth),
-    endDate: new Date(endOfMonth)
+    requiredDate: new Date()
   });
 
   const reportList = useSelector(
@@ -64,8 +60,7 @@ function ReportLayout({ initialJob }) {
     dispatch(
       fetchJobWorkerList({
         id: initialJob,
-        startDate: moment(startOfMonth).format(DATE_FORMAT),
-        endDate: moment(endOfMonth).format(DATE_FORMAT)
+        requiredDate: moment(startOfMonth).format(DATE_FORMAT)
       })
     );
 
@@ -75,25 +70,21 @@ function ReportLayout({ initialJob }) {
     }));
   }, []);
 
-  const onReportSearch = ({ startDate, endDate }: any) => {
+  const onReportSearch = ({ requiredDate }: any) => {
     //
     const payload = {
       id: initialJob,
-      startDate: moment(startDate).format(DATE_FORMAT),
-      endDate: moment(endDate).format(DATE_FORMAT)
+      requiredDate: moment(requiredDate).format(DATE_FORMAT)
     };
 
     dispatch(fetchJobWorkerList(payload));
   };
 
   const handleDateChange = (value: any): void => {
-    if (value?.length > 0) {
-      setFilters((prevFilters) => ({
-        ...prevFilters,
-        startDate: value?.[0],
-        endDate: value?.[1]
-      }));
-    }
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      requiredDate: moment(value?.toDate()).format(DATE_FORMAT)
+    }));
   };
 
   const applyFilters = (): any => {
@@ -154,10 +145,13 @@ function ReportLayout({ initialJob }) {
                   </Select>
                 </FormControl>
 
-                <DateRangePicker
+                <DatePicker
+                  value={filters?.requiredDate}
                   onChange={handleDateChange}
-                  value={[filters?.startDate, filters?.endDate]}
-                  showLeadingZeros
+                  style={{
+                    height: '53px',
+                    color: '#4C5359'
+                  }}
                 />
 
                 <IconButton

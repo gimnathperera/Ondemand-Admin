@@ -16,7 +16,7 @@ const JobTimeLog = ({ jobId }) => {
     dispatch(fetchJobTimeLine({ jobId }));
   }, []);
 
-  const convertedRecords = () => {
+  const convertedRecords = (): any => {
     const records = [];
     if (recordList.length > 0) {
       _.map(recordList, (record) => {
@@ -52,7 +52,7 @@ const JobTimeLog = ({ jobId }) => {
         </Box>
       ) : recordList.length > 0 ? (
         <Box sx={{ width: '100%' }}>
-          <Timeline items={convertedRecords()} />
+          {/* <Timeline items={convertedRecords()} /> */}
         </Box>
       ) : (
         <p>No data</p>
