@@ -32,8 +32,6 @@ import { DATE_FORMAT } from 'src/constants/common-configurations';
 import JobTimeLog from './JobTimeLog';
 import bglogo from 'src/assets/images/bglogo.jpg';
 
-type Props = {};
-
 const Input = styled('input')({
   display: 'none'
 });

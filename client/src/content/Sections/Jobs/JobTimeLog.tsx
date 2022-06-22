@@ -52,7 +52,7 @@ const JobTimeLog = ({ jobId }) => {
         </Box>
       ) : recordList.length > 0 ? (
         <Box sx={{ width: '100%' }}>
-          {/* <Timeline items={convertedRecords()} /> */}
+          <Timeline items={convertedRecords()} />
         </Box>
       ) : (
         <p>No data</p>
