@@ -290,7 +290,7 @@ const JobEditTab = ({ _job }: any) => {
                 >
                   <Box>
                     <Typography variant="h4" gutterBottom>
-                      Job Time Lines
+                      Job Time Line
                     </Typography>
                     <Typography variant="subtitle2">
                       Job time line changes
