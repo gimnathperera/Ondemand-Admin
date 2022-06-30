@@ -5,6 +5,7 @@ export const userLogin = (payload) => ({
   payload
 });
 
+//clear redux store with persistant
 export const userLogout = () => {
   return {
     type: CLEAR_REDUX_STORE
