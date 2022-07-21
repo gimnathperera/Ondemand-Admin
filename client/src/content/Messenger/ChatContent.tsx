@@ -35,7 +35,7 @@ function ChatContent({ currentChat }) {
     <Box p={3}>
       {currentChat &&
         currentChat?.map(
-          ({ from, isFromAdmin, description, createdAt }: any) => {
+          ({ from, isFromAdmin, description, createdAt, to }: any) => {
             return !isFromAdmin ? (
               <Box
                 display="flex"
@@ -47,9 +47,7 @@ function ChatContent({ currentChat }) {
                   variant="rounded"
                   sx={{ width: 50, height: 50 }}
                   {...stringAvatar(
-                    `${from.fullName.split(' ')[0]} ${
-                      from.fullName.split(' ')[1]
-                    }`
+                    `${to.fullName.split(' ')[0]} ${to.fullName.split(' ')[1]}`
                   )}
                 />
                 <Box
