@@ -9,15 +9,17 @@ import {
   TableHead,
   TablePagination,
   TableRow,
+  Button,
   Typography
 } from '@mui/material';
-
 import { styled } from '@mui/material/styles';
-
-import Label from 'src/components/Label';
 import { convertTimeValue } from 'src/common/functions';
 import moment from 'moment';
 import _ from 'lodash';
+
+import Label from 'src/components/Label';
+import Modal from 'src/components/Modal';
+import ShiftTable from '../Jobs/ShiftTable';
 
 interface ReportTableProps {
   reports?: any[];
@@ -34,6 +36,9 @@ const TableComponent = styled(Table)(
 const ReportTable: FC<ReportTableProps> = ({ reports }) => {
   const [page, setPage] = useState<number>(0);
   const [limit, setLimit] = useState<number>(5);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [shifts, setShifts] = useState<any>([]);
+  const [currentUser, setCurrentUser] = useState<string>('');
 
   const applyPagination = (_jobs: any, page: number, limit: number): any => {
     return _jobs.slice(page * limit, page * limit + limit);
@@ -97,22 +102,21 @@ const ReportTable: FC<ReportTableProps> = ({ reports }) => {
     return <Label color={color}>{text}</Label>;
   };
 
-  const getShiftTimeList = (
-    shifts: Array<any>,
-    workerId: string
-  ): JSX.Element => {
-    const worker = _.filter(shifts, { worker: workerId });
+  const handleModalClose = () => {
+    setShifts([]);
+    setCurrentUser('');
+    setIsOpen(false);
+  };
 
-    return (
-      <ul>
-        {worker[0]?.shifts.map(({ workerStartTime, workerEndTime, _id }) => (
-          <li key={_id}>
-            {convertTimeValue(workerStartTime) || '-'} -{' '}
-            {convertTimeValue(workerEndTime) || '-'}
-          </li>
-        ))}
-      </ul>
+  const viewSchedules = (workers, currentWorkerId, fullName) => {
+    const selectedWorker = _.find(
+      workers,
+      (user) => user.worker === currentWorkerId
     );
+
+    setShifts(selectedWorker?.shifts);
+    setCurrentUser(fullName);
+    setIsOpen(true);
   };
 
   return (
@@ -220,17 +224,19 @@ const ReportTable: FC<ReportTableProps> = ({ reports }) => {
                   </TableCell>
 
                   <TableCell align="center" sx={{ minWidth: '172px' }}>
-                    <Typography
-                      variant="body1"
-                      fontWeight="bold"
-                      color="text.primary"
-                      gutterBottom
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      onClick={() =>
+                        viewSchedules(
+                          report?.job?.workers,
+                          report?.worker?._id,
+                          report?.worker?.fullName
+                        )
+                      }
                     >
-                      {getShiftTimeList(
-                        report?.job.workers,
-                        report.worker._id
-                      ) || '-'}
-                    </Typography>
+                      View schedule
+                    </Button>
                   </TableCell>
                   <TableCell align="center" sx={{ minWidth: '172px' }}>
                     <Typography
@@ -274,6 +280,13 @@ const ReportTable: FC<ReportTableProps> = ({ reports }) => {
           rowsPerPageOptions={[5, 10, 25, 30]}
         />
       </Box>
+      <Modal
+        isOpen={isOpen}
+        width={800}
+        handleClose={handleModalClose}
+        content={<ShiftTable data={shifts} />}
+        modalHeader={`${currentUser} | Shift Allocation`}
+      />
     </>
   );
 };

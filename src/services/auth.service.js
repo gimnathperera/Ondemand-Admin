@@ -18,8 +18,12 @@ const loginUserWithEmailAndPassword = async (email, password) => {
 
   if (!user || !(await user.isPasswordMatch(password))) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Incorrect email or password');
-  } else if (user?.status == userStatus.REVIEWING || user?.status == userStatus.DEACTIVATED) {
-    throw new ApiError(httpStatus.UNAUTHORIZED, 'User is not Active');
+  } else if (
+    user?.status == userStatus.REVIEWING ||
+    user?.status == userStatus.DEACTIVATED ||
+    user?.status == userStatus.PENDING
+  ) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'User is not Active');
   }
   return user;
 };
