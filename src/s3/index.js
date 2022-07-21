@@ -13,6 +13,7 @@ const s3 = new S3({
   accessKeyId,
   secretAccessKey,
 });
+//have to make sure s3 bucket more organized and reusable
 
 // Upload a file to s3
 const uploadFile = async (file) => {

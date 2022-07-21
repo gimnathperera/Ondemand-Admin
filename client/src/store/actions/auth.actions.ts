@@ -5,6 +5,7 @@ export const userLogin = (payload) => ({
   payload
 });
 
+
 export const userLogout = () => {
   return {
     type: CLEAR_REDUX_STORE
