@@ -1,4 +1,6 @@
-export const BASE_URL = process.env.REACT_APP_API_URL ||'https://ondemand-dev.herokuapp.com/v1';
+export const BASE_URL =
+  process.env.REACT_APP_API_URL || 'https://ondemand-dev.herokuapp.com/v1';
+// export const BASE_URL = 'http://localhost:5000/v1';
 export const HTTP_UNAUTHORIZED = 401;
 export const MOBILE_REGEX =
   /([0-9\s\-]{7,})(?:\s*(?:#|x\.?|ext\.?|extension)\s*(\d+))?$/;

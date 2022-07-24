@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Payslip</title>
+    <title>Invoice</title>
 
     <style>
       body {
@@ -39,19 +39,21 @@
       }
 
       .invoice-box table tr.top table td.title {
-        font-size: 45px;
+        font-size: 24px;
         line-height: 45px;
-        color: #333;
+        font-weight: bold;
+        color: #3b73a6;
       }
 
       .invoice-box table tr.information table td {
-        padding-bottom: 40px;
+        padding-bottom: 20px;
       }
 
       .invoice-box table tr.heading td {
         background: #eee;
         border-bottom: 1px solid #ddd;
         font-weight: bold;
+        color: #3b73a6;
       }
 
       .invoice-box table tr.details td {
@@ -118,14 +120,9 @@
           <td colspan="2">
             <table>
               <tr>
-                <td class="title">
-                  <img src="https://i.ibb.co/Vxz9xZF/On-Demand-Auto-Care-Logo.png" style="width: 100%; max-width: 300px" />
-                </td>
+                <td class="title"></td>
 
-                <td>
-                  Invoice #: {{invoiceId}}<br />
-                  Created: {{invoiceDate}}<br />
-                </td>
+                <td class="title">INVOICE</td>
               </tr>
             </table>
           </td>
@@ -142,50 +139,60 @@
                 </td>
 
                 <td>
-                  {{workerFullName}}<br />
-                  {{workerAddress}}<br />
-                  {{workerEmail}}
+                  INVOICE# {{invoiceId}}<br />
+                  DATE {{startDate}} to {{endDate}}<br />
                 </td>
               </tr>
             </table>
           </td>
         </tr>
 
-        <tr class="heading">
-          <td>Total AUD Paid</td>
+        <tr class="information">
+          <td colspan="2">
+            <table>
+              <tr>
+                <td>
+                  TO<br />
+                  Accounts<br />
+                  Platnum Group Int Pty Ltd<br />
+                  19B Wayne Court<br />
+                  Dandenong, VIC 3175<br />
+                  accounts@ondemandautocare.com.au
+                </td>
 
-          <td>Price</td>
+                <td>FOR Project or service description</td>
+              </tr>
+            </table>
+          </td>
         </tr>
 
-        <tr class="details">
+        <tr class="heading">
+          <td>Description</td>
+
+          <td>Amount</td>
+        </tr>
+        {{#each records}}
+        <tr class="item">
+          <td>
+            {{this.logginDate}} {{this.startTime}} to {{this.endTime}} {{this.workingHours}}hs * 25 = ${{this.total}}.00
+          </td>
+
+          <td>${{this.total}}.00</td>
+        </tr>
+        {{/each}}
+        <tr class="item">
           <td>Total</td>
 
           <td>${{totalPayment}}.00</td>
         </tr>
-
-        <tr class="heading">
-          <td>Inovice Date</td>
-
-          <td>Price</td>
-        </tr>
-
-        <tr class="item">
-          <td>27.02.2022</td>
-
-          <td>${{totalPayment}}.00</td>
-        </tr>
-
-        <tr class="total">
-          <td></td>
-
-          <td>Total: ${{totalPayment}}.00</td>
-        </tr>
       </table>
+      <p class="footer-text">Make all checks payable to Account Name: {{nameOfBank}}</p>
+      <p class="footer-text">BSB: {{bsb}}</p>
+      <p class="footer-text">Account number: {{accountNumber}}</p>
 
       <div class="footer">
-        <p class="footer-text">Your “ A ” grade , Honest , Reliable & Affordable Cleaning Partner</p>
-        <p class="footer-text">Unbeatable results at a competitive price are pretty much guaranteed</p>
-        <p class="footer-text">0416 456 722 | 0426 456 766</p>
+        <p class="footer-text">If you have any questions concerning this invoice, contact Name | Phone | Email</p>
+        <p class="footer-text">THANK YOU FOR YOUR BUSINESS!</p>
       </div>
     </div>
   </body>

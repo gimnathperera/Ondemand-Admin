@@ -1,5 +1,5 @@
 const allRoles = {
-  Worker: ['manageUserJobs', 'manageMessages', 'manageDocuments', 'managePayments'],
+  Worker: ['manageUserJobs', 'manageMessages', 'manageDocuments', 'managePayments', 'manageReports'],
   Admin: [
     'getUsers',
     'manageUsers',
