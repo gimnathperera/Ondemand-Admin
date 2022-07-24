@@ -75,4 +75,7 @@ module.exports = {
   location: {
     distanceVariable: 10000,
   },
+  payment: {
+    paymentForHour: 25, //in dollars
+  },
 };

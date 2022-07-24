@@ -49,7 +49,66 @@ const generatePaySlip = async ({ invoiceId, paySlipName, totalPayment, workerAdd
     throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Internal server error');
   }
 };
+const generateInvoice = async ({
+  invoiceId,
+  invoiceName,
+  totalPayment,
+  records,
+  totalWorkingHours,
+  startDate,
+  endDate,
+  bsb,
+  accountNumber,
+  nameOfBank,
+}) => {
+  try {
+    // today as invoice received date
+    const invoiceDate = moment().format('YYYY-MM-DD');
+
+    const template = path.resolve(__dirname, `../public/invoice.html`);
+    const outputPdf = path.resolve(__dirname, `../temp/${invoiceName.replaceAll('/', '')}.pdf`);
+
+    if (!fs.existsSync(template)) {
+      logger.error(`X payslip template not found`);
+    }
+
+    // Read HTML Template
+    const html = fs.readFileSync(template, 'utf8');
+
+    const options = {
+      format: 'A4',
+      orientation: 'portrait',
+      border: '10mm',
+    };
+
+    const document = {
+      html: html,
+      data: {
+        invoiceId,
+        invoiceName,
+        totalPayment,
+        records,
+        totalWorkingHours,
+        startDate: moment(startDate).format('YYYY/MM/DD'),
+        endDate: moment(endDate).format('YYYY/MM/DD'),
+        invoiceDate,
+        bsb,
+        accountNumber,
+        nameOfBank,
+      },
+      path: outputPdf,
+      type: '',
+    };
+
+    const response = await pdf.create(document, options);
+    logger.info(`✓ Invoice generated successfully`);
+    return response?.filename;
+  } catch (err) {
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Internal server error');
+  }
+};
 
 module.exports = {
   generatePaySlip,
+  generateInvoice,
 };

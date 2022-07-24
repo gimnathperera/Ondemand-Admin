@@ -32,5 +32,6 @@ router
   );
 
 router.route('/').get(auth('managePayments'), validate(paymentValidation.getPaySlips), paymentController.getPaySlips);
+router.route('/:workerId').get(validate(paymentValidation.getFortnitePayment), paymentController.getFortnitePayment);
 
 module.exports = router;
