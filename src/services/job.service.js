@@ -191,12 +191,17 @@ const trackDailyJob = async (logBody) => {
   if (!findWorkerObject(job.workers, logBody.worker)) {
     throw new ApiError(httpStatus.UNPROCESSABLE_ENTITY, `Worker is not assigned to this job`);
   }
+  let realStartTime = moment();
+  const remainder = 30 - (realStartTime.minute() % 30);
+
+  const _startTime = moment(realStartTime).add(remainder, 'minutes').format('HH:mm');
+
   const dailyTrack = {
     ...logBody,
     ...{
       logginDate: moment().format('YYYY-MM-DD'),
       status: logStatus.ACTIVE,
-      startTime: moment().format('HH:mm'),
+      startTime: _startTime,
       endTime: '',
       comment: '',
     },
@@ -220,10 +225,14 @@ const updateDailyJobTrackById = async (trackingId, updateBody) => {
     throw new ApiError(httpStatus.UNPROCESSABLE_ENTITY, `Time has been already updated or Record is not available`);
   }
 
+  let realEndTime = moment();
+  const remainder = 30 - (realEndTime.minute() % 30);
+  const _endTime = moment(realEndTime).add(remainder, 'minutes').format('HH:mm');
+
   const updatingTrack = {
     ...updateBody,
     ...{
-      endTime: moment().format('HH:mm'),
+      endTime: _endTime,
       status: logStatus.COMPLETED,
     },
   };
