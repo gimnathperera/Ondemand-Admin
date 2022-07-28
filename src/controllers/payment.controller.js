@@ -2,7 +2,6 @@ const httpStatus = require('http-status');
 const moment = require('moment');
 const _ = require('lodash');
 const fs = require('fs');
-const path = require('path');
 
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
@@ -17,7 +16,7 @@ const { payment } = require('../config/config');
 // Invoice submit by worker every fortnite (15th & 30th)
 const submitInvoice = catchAsync(async (req, res) => {
   const files = req.files;
-  const { worker, totalPayment } = req.body;
+  const { worker, startDate, endDate } = req.body;
   if (files?.length == 0) {
     throw new ApiError(httpStatus.NOT_FOUND, 'No invoice received');
   }
@@ -31,6 +30,26 @@ const submitInvoice = catchAsync(async (req, res) => {
 
   // generate invoiceId
   const invoiceId = generateInvoiceId(workerData?.userId);
+
+  const filter = {
+    worker,
+    status: 'Completed',
+    createdAt: {
+      $gte: moment(startDate).format('YYYY-MM-DDTHH:mm:ssZ'),
+      $lt: moment(endDate).format('YYYY-MM-DDTHH:mm:ssZ'),
+    },
+  };
+
+  const options = { ...pick(req.query, ['sortBy', 'limit', 'page']), populate: 'worker, job' }; //populate workers
+  const response = await reportService.queryReports(filter, options);
+  let totalPayment = 0;
+  if (response?.results.length > 0) {
+    const { results } = response;
+    const records = _.map(results, (record) =>
+      _.pick(record, ['logginDate', 'startTime', 'endTime', 'workingHours', 'job.name'])
+    );
+    totalPayment = _.sumBy(records, 'workingHours') * payment.paymentForHour;
+  }
 
   const pdfData = {
     invoiceId,
@@ -123,6 +142,9 @@ const getFortnitePayment = catchAsync(async (req, res) => {
       bsb: results?.[0]?.worker?.bsb,
       accountNumber: results?.[0]?.worker?.accountNumber,
       nameOfBank: results?.[0]?.worker?.nameOfBank,
+      workerAddress: results?.[0]?.worker?.address,
+      phoneNumber: results?.[0]?.worker?.phoneNumber,
+      email: results?.[0]?.worker?.email,
     };
     const createdInvoice = await pdfService.generateInvoice(payload);
 
@@ -139,3 +161,5 @@ module.exports = {
   getPaySlips,
   getFortnitePayment,
 };
+
+//look into email sending configuration

@@ -15,7 +15,7 @@ const submitInvoice = async (worker) => {
   const existingWorker = await userService.getUserById(worker);
   if (!existingWorker) throw new ApiError(httpStatus.NOT_FOUND, `Worker not found for ${worker}`);
 
-  logger.info(`✓ Email sending successfully`);
+  logger.info(`✓ Email sent successfully`);
   return existingWorker;
 };
 

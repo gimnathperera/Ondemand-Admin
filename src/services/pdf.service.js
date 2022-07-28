@@ -12,7 +12,7 @@ const generatePaySlip = async ({ invoiceId, paySlipName, totalPayment, workerAdd
     // today as invoice received date
     const invoiceDate = moment().format('YYYY-MM-DD');
 
-    const template = path.resolve(__dirname, `../public/template.html`);
+    const template = path.resolve(__dirname, `../public/payslip.html`);
     const outputPdf = path.resolve(__dirname, `../temp/${paySlipName}.pdf`);
 
     if (!fs.existsSync(template)) {
@@ -60,6 +60,9 @@ const generateInvoice = async ({
   bsb,
   accountNumber,
   nameOfBank,
+  workerAddress,
+  phoneNumber,
+  email,
 }) => {
   try {
     // today as invoice received date
@@ -95,6 +98,9 @@ const generateInvoice = async ({
         bsb,
         accountNumber,
         nameOfBank,
+        workerAddress,
+        phoneNumber,
+        email,
       },
       path: outputPdf,
       type: '',

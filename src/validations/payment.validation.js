@@ -4,7 +4,8 @@ const { objectId } = require('./custom.validation');
 const submitInvoice = {
   body: Joi.object().keys({
     worker: Joi.required().custom(objectId),
-    totalPayment: Joi.string().required(),
+    startDate: Joi.string(),
+    endDate: Joi.string(),
   }),
 };
 
