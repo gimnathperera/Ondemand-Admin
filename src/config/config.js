@@ -65,6 +65,8 @@ module.exports = {
       },
     },
     from: envVars.EMAIL_FROM,
+    admin1Email: 'accounts@ondemandautocare.com.au',
+    admin2Email: 'nipun@ondemandautocare.com.au',
   },
   aws: {
     buckets: { storageBucket: 'demand-storage', appDataBucket: 'demandappdata' },

@@ -21,9 +21,7 @@ const submitInvoice = catchAsync(async (req, res) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'No invoice received');
   }
   // get the invoice file and send the file to admin via email
-  const workerData = await paymentService.submitInvoice(worker);
-
-  //get worker details from response and pass it to generatePaySlip function to populate paySlip
+  const workerData = await paymentService.submitInvoice(worker, files?.[0]?.filename);
 
   // payslip pdf key
   const paySlipName = generatePaySlipName(workerData?.userId);
@@ -161,5 +159,3 @@ module.exports = {
   getPaySlips,
   getFortnitePayment,
 };
-
-//look into email sending configuration

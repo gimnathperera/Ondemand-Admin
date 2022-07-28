@@ -13,7 +13,7 @@ const generatePaySlip = async ({ invoiceId, paySlipName, totalPayment, workerAdd
     const invoiceDate = moment().format('YYYY-MM-DD');
 
     const template = path.resolve(__dirname, `../public/payslip.html`);
-    const outputPdf = path.resolve(__dirname, `../temp/${paySlipName}.pdf`);
+    const outputPdf = path.resolve(__dirname, `../temp/${paySlipName}`);
 
     if (!fs.existsSync(template)) {
       logger.error(`X payslip template not found`);
