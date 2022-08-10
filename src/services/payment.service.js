@@ -20,7 +20,13 @@ const submitInvoice = async (worker, attachment) => {
 
   const ADMIN1_EMAIL = config.email.admin1Email;
   const ADMIN2_EMAIL = config.email.admin2Email;
-  await emailService.sendEmail(ADMIN1_EMAIL, 'Invoice', 'Please refer following invoice', attachment, ADMIN2_EMAIL);
+  await emailService.sendEmail(
+    'gimnathperera@gmail.com',
+    'Invoice',
+    'Please refer following invoice',
+    attachment,
+    'gimnath.dev@gmail.com'
+  );
 
   // remove temp invoice file from the server
   const tempFilePath = path.join(__dirname, `../../uploads/${attachment}`);

@@ -31,6 +31,11 @@ const calcWorkingHours = (startTime, endTime) => {
 
   // round up minutes to nearst hour
   const hours = Math.round(parseInt(duration.asMinutes()) / 60);
+  if (hours < 0) {
+    const duration = moment.duration(_startTime.diff(_endTime));
+    const hours = Math.round(parseInt(duration.asMinutes()) / 60);
+    return hours - 12;
+  }
 
   return hours;
 };

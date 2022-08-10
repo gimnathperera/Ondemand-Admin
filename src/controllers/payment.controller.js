@@ -48,7 +48,28 @@ const submitInvoice = catchAsync(async (req, res) => {
     const records = _.map(results, (record) =>
       _.pick(record, ['logginDate', 'startTime', 'endTime', 'workingHours', 'job.name'])
     );
-    totalPayment = _.sumBy(records, 'workingHours') * payment.paymentForHour;
+
+    const FORMAT = 'HH:mm';
+    const TOFORMAT = 'YYYY-MM-DDTHH:mm:ssZ';
+
+    const beforeTime = moment('22:00', FORMAT).format(TOFORMAT);
+    const afterTime = moment('06:00', FORMAT).add(1, 'days').format(TOFORMAT);
+
+    let nightHours = 0;
+    let dayHours = 0;
+
+    records.map((record) => {
+      const time = moment(record?.startTime, FORMAT).format(TOFORMAT);
+
+      if (moment(time).isSameOrAfter(beforeTime)) {
+        console.log('is between');
+        nightHours = nightHours + Number(record?.workingHours);
+      } else {
+        dayHours = dayHours + Number(record?.workingHours);
+      }
+    });
+
+    totalPayment = nightHours * Number(workerData?.nightShiftPayment) + dayHours * Number(workerData?.dayShiftPayment);
   }
 
   const pdfData = {
