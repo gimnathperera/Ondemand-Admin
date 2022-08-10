@@ -38,9 +38,11 @@ const submitInvoice = catchAsync(async (req, res) => {
     },
   };
 
+  // change the payment calucation logic
   const options = { ...pick(req.query, ['sortBy', 'limit', 'page']), populate: 'worker, job' }; //populate workers
   const response = await reportService.queryReports(filter, options);
   let totalPayment = 0;
+
   if (response?.results.length > 0) {
     const { results } = response;
     const records = _.map(results, (record) =>
@@ -101,6 +103,7 @@ const getPaySlips = catchAsync(async (req, res) => {
   res.send(result);
 });
 
+// change the payment calucation logic
 const getFortnitePayment = catchAsync(async (req, res) => {
   const filter = {
     worker: req.params.workerId,
