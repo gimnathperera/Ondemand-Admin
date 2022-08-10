@@ -40,13 +40,13 @@ const userSchema = mongoose.Schema(
     dayShiftPayment: {
       type: String,
       trim: true,
-      default: '0',
+      default: '20',
     },
     // in AUD dollars
     nightShiftPayment: {
       type: String,
       trim: true,
-      default: '0',
+      default: '25',
     },
     emergencyContact: {
       type: String,
