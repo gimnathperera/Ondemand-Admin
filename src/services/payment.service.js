@@ -1,21 +1,30 @@
 const httpStatus = require('http-status');
+const path = require('path');
 
 const logger = require('../config/logger');
 const { Payment } = require('../models');
-const { userService } = require('../services');
+const { userService, emailService } = require('../services');
 const ApiError = require('../utils/ApiError');
+const config = require('../config/config');
+const { removeTempFile } = require('../utils/functions');
 
 /**
  * Submit invoice by worker - every fortnite  (15th & 30th)
  * @param {Object} worker
  * @returns {Promise<Document>}
  */
-const submitInvoice = async (worker) => {
+const submitInvoice = async (worker, attachment) => {
   //  send email to the admin attachings the invoice file
   const existingWorker = await userService.getUserById(worker);
   if (!existingWorker) throw new ApiError(httpStatus.NOT_FOUND, `Worker not found for ${worker}`);
 
-  logger.info(`✓ Email sent successfully`);
+  const ADMIN1_EMAIL = config.email.admin1Email;
+  const ADMIN2_EMAIL = config.email.admin2Email;
+  await emailService.sendEmail(ADMIN1_EMAIL, 'Invoice', 'Please refer following invoice', attachment, ADMIN2_EMAIL);
+
+  // remove temp invoice file from the server
+  const tempFilePath = path.join(__dirname, `../../uploads/${attachment}`);
+  await removeTempFile(tempFilePath);
   return existingWorker;
 };
 

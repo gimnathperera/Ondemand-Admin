@@ -12,24 +12,25 @@ const transport = nodemailer.createTransport(config.email.smtp);
  * @param {string} text
  * @returns {Promise}
  */
-const sendEmail = async (to, subject, text, attachment = '') => {
+const sendEmail = async (to, subject, text, attachment = '', cc = '') => {
   const msg = {
     from: config.email.from,
     to,
+    ...(cc && { cc }),
     subject,
     text,
     ...(attachment && {
       attachments: [
         {
           filename: attachment,
-          path: path.join(__dirname, `../public/${attachment}`),
+          path: path.join(__dirname, `../../uploads/${attachment}`),
         },
       ],
     }),
   };
-  
+
   await transport.sendMail(msg);
-  logger.info('Email has been sent successfully...');
+  logger.info(`✓ Email sent successfully`);
 };
 
 /**
