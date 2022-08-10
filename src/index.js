@@ -9,18 +9,6 @@ const logger = require('./config/logger');
 
 let server;
 
-//Main cronjob everyday 12:00 AM
-// cron.schedule(config.cronjobs.time, async () => {
-//   try {
-//     logger.info(`✓ Cron-job started - job update `);
-//     await axios.get(`${config.baseUrl}/v1/jobs/cron`);
-//     logger.info(`✓ Cron-job finished - job update`);
-//   } catch (err) {
-//     logger.error(`X ${err.message}`);
-//     logger.info(`X Cron-job failed - job update`);
-//   }
-// });
-
 mongoose.connect(config.mongoose.url, config.mongoose.options).then(() => {
   const PORT = process.env.PORT || 8000;
   logger.info('Connected to MongoDB');
