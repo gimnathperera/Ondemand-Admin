@@ -62,7 +62,6 @@ const submitInvoice = catchAsync(async (req, res) => {
       const time = moment(record?.startTime, FORMAT).format(TOFORMAT);
 
       if (moment(time).isSameOrAfter(beforeTime)) {
-        console.log('is between');
         nightHours = nightHours + Number(record?.workingHours);
       } else {
         dayHours = dayHours + Number(record?.workingHours);
