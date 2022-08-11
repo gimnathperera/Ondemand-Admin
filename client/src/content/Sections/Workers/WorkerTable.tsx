@@ -193,7 +193,7 @@ const NewApplicantTable: FC<NewApplicantTableProps> = ({ workers }) => {
               <TableCell align="center">E-mail</TableCell>
               <TableCell align="center">Date of Birth</TableCell>
               <TableCell align="center">Gender</TableCell>
-              <TableCell align="center">Nationality</TableCell>
+              <TableCell align="center">Payment</TableCell>
               <TableCell align="center">Emergency Contact</TableCell>
               <TableCell align="center">Worker Type</TableCell>
               <TableCell align="center">Status</TableCell>
@@ -300,7 +300,17 @@ const NewApplicantTable: FC<NewApplicantTableProps> = ({ workers }) => {
                       gutterBottom
                       noWrap
                     >
-                      {worker?.nationality || '-'}
+                      <span style={{ fontWeight: 'bold' }}>Day shift</span>{' '}
+                      {`- ${worker?.dayShiftPayment || '-'}.00$`}
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      color="text.primary"
+                      gutterBottom
+                      noWrap
+                    >
+                      <span style={{ fontWeight: 'bold' }}>Night shift</span>{' '}
+                      {`- ${worker?.nightShiftPayment || '-'}.00$`}
                     </Typography>
                   </TableCell>
                   <TableCell align="center">

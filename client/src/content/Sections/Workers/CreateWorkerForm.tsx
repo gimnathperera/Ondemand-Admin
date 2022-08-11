@@ -36,6 +36,8 @@ const CreateWorkerForm = ({ onSuccess, formData }: CreateWorkerFormProps) => {
     address: formData?.address || '',
     gender: formData?.gender || '',
     nationality: formData?.nationality || '',
+    dayShiftPayment: formData?.dayShiftPayment || '20',
+    nightShiftPayment: formData?.nightShiftPayment || '28',
     emergencyContact: formData?.emergencyContact || '',
     abn: formData?.abn || '',
     nameOfBank: formData?.nameOfBank || '',
@@ -60,6 +62,8 @@ const CreateWorkerForm = ({ onSuccess, formData }: CreateWorkerFormProps) => {
       .required('Contact number required'),
     gender: Yup.string().required('Gender is required'),
     nationality: Yup.string().required('Nationality is required'),
+    dayShiftPayment: Yup.string().required('Day Shift Payment is required'),
+    nightShiftPayment: Yup.string().required('Night Shift Payment is required'),
     emergencyContact: Yup.string()
       .matches(MOBILE_REGEX, 'Invalid phone number')
       .required('Emergency number required'),
@@ -84,6 +88,8 @@ const CreateWorkerForm = ({ onSuccess, formData }: CreateWorkerFormProps) => {
       .required('Contact number required'),
     gender: Yup.string().required('Gender is required'),
     nationality: Yup.string().required('Nationality is required'),
+    dayShiftPayment: Yup.string().required('Day Shift Payment is required'),
+    nightShiftPayment: Yup.string().required('Night Shift Payment is required'),
     emergencyContact: Yup.string()
       .matches(MOBILE_REGEX, 'Invalid phone number')
       .required('Emergency number required'),
@@ -233,6 +239,40 @@ const CreateWorkerForm = ({ onSuccess, formData }: CreateWorkerFormProps) => {
                 onChange={handleChange}
                 type="text"
                 value={values.nationality}
+                variant="outlined"
+              />
+
+              <TextField
+                error={Boolean(
+                  touched.dayShiftPayment && errors.dayShiftPayment
+                )}
+                fullWidth
+                helperText={touched.dayShiftPayment && errors.dayShiftPayment}
+                label="Worker Day Shift Payment"
+                margin="normal"
+                name="dayShiftPayment"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                type="text"
+                value={values.dayShiftPayment}
+                variant="outlined"
+              />
+
+              <TextField
+                error={Boolean(
+                  touched.nightShiftPayment && errors.nightShiftPayment
+                )}
+                fullWidth
+                helperText={
+                  touched.nightShiftPayment && errors.nightShiftPayment
+                }
+                label="Worker Night Shift Payment"
+                margin="normal"
+                name="nightShiftPayment"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                type="text"
+                value={values.nightShiftPayment}
                 variant="outlined"
               />
 

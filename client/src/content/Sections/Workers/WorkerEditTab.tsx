@@ -463,6 +463,48 @@ const WorkerEditTab = ({ _worker }: any) => {
                         </Text>
                       </Box>
                     </Grid>
+                    <Grid
+                      item
+                      xs={12}
+                      sm={4}
+                      md={3}
+                      textAlign={{ sm: 'right' }}
+                    >
+                      <Box pr={3} pb={2}>
+                        Daily Payment Amount:
+                      </Box>
+                    </Grid>
+                    <Grid item xs={12} sm={8} md={9}>
+                      <Text color="black">
+                        <b>
+                          {' '}
+                          {`${_worker?.dayShiftPayment}.00 $` || (
+                            <Skeleton variant="text" width={210} />
+                          )}
+                        </b>
+                      </Text>
+                    </Grid>
+                    <Grid
+                      item
+                      xs={12}
+                      sm={4}
+                      md={3}
+                      textAlign={{ sm: 'right' }}
+                    >
+                      <Box pr={3} pb={2}>
+                        Night Payment Amount:
+                      </Box>
+                    </Grid>
+                    <Grid item xs={12} sm={8} md={9}>
+                      <Text color="black">
+                        <b>
+                          {' '}
+                          {`${_worker?.nightShiftPayment}.00 $` || (
+                            <Skeleton variant="text" width={210} />
+                          )}
+                        </b>
+                      </Text>
+                    </Grid>
                   </Grid>
                 </Typography>
               </CardContent>

@@ -36,6 +36,18 @@ const userSchema = mongoose.Schema(
       required: true,
       trim: true,
     },
+    // in AUD dollars
+    dayShiftPayment: {
+      type: String,
+      trim: true,
+      default: '20',
+    },
+    // in AUD dollars
+    nightShiftPayment: {
+      type: String,
+      trim: true,
+      default: '25',
+    },
     emergencyContact: {
       type: String,
       required: true,

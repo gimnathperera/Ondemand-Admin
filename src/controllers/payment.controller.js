@@ -38,15 +38,37 @@ const submitInvoice = catchAsync(async (req, res) => {
     },
   };
 
+  // change the payment calucation logic
   const options = { ...pick(req.query, ['sortBy', 'limit', 'page']), populate: 'worker, job' }; //populate workers
   const response = await reportService.queryReports(filter, options);
   let totalPayment = 0;
+
   if (response?.results.length > 0) {
     const { results } = response;
     const records = _.map(results, (record) =>
       _.pick(record, ['logginDate', 'startTime', 'endTime', 'workingHours', 'job.name'])
     );
-    totalPayment = _.sumBy(records, 'workingHours') * payment.paymentForHour;
+
+    const FORMAT = 'HH:mm';
+    const TOFORMAT = 'YYYY-MM-DDTHH:mm:ssZ';
+
+    const beforeTime = moment('22:00', FORMAT).format(TOFORMAT);
+    const afterTime = moment('06:00', FORMAT).add(1, 'days').format(TOFORMAT);
+
+    let nightHours = 0;
+    let dayHours = 0;
+
+    records.map((record) => {
+      const time = moment(record?.startTime, FORMAT).format(TOFORMAT);
+
+      if (moment(time).isSameOrAfter(beforeTime)) {
+        nightHours = nightHours + Number(record?.workingHours);
+      } else {
+        dayHours = dayHours + Number(record?.workingHours);
+      }
+    });
+
+    totalPayment = nightHours * Number(workerData?.nightShiftPayment) + dayHours * Number(workerData?.dayShiftPayment);
   }
 
   const pdfData = {
@@ -101,6 +123,7 @@ const getPaySlips = catchAsync(async (req, res) => {
   res.send(result);
 });
 
+// change the payment calucation logic
 const getFortnitePayment = catchAsync(async (req, res) => {
   const filter = {
     worker: req.params.workerId,
